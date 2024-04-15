@@ -1,12 +1,12 @@
 import { useRef } from "react";
-import { Image, StyleSheet, TextInput, View } from "react-native";
+import { Image, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import RegularButton from "../components/RegularButton";
 
 const LoginScreen = () => {
   const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.imageContainer}>
         <Image
           style={styles.image}
@@ -57,16 +57,13 @@ const LoginScreen = () => {
           </RegularButton>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
     marginTop: "20%",
   },
   mainContainer: {
@@ -88,6 +85,7 @@ const styles = StyleSheet.create({
   loginButtonContainer: {
     flex: 2,
     alignItems: "center",
+    marginTop: 20,
   },
   image: {
     width: 220,

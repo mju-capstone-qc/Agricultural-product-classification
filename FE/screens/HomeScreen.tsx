@@ -1,13 +1,5 @@
 import { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  Image,
-  Pressable,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import Background from "../components/Background";
 import CameraButton from "../components/CameraButton";

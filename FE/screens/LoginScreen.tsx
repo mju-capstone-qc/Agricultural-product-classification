@@ -1,63 +1,71 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Image, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import RegularButton from "../components/RegularButton";
+import KakaoLogin from "../components/KakaoLogin";
 
-const LoginScreen = () => {
+type props = {
+  loginHandler: (logined: boolean) => void;
+};
+
+const LoginScreen = ({ loginHandler }: props) => {
+  const [kakao, setKakao] = useState(false);
+
   const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image
-          style={styles.image}
-          source={require("../assets/images/logo.png")}
-        />
-      </View>
-      <View style={styles.mainContainer}>
-        <View style={styles.loginContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            ref={emailRef}
-            autoCapitalize="none"
-            keyboardType="email-address"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="password"
-            secureTextEntry={true}
-            ref={passwordRef}
-            autoCapitalize="none"
-          />
-        </View>
-        <View style={styles.loginButtonContainer}>
-          <RegularButton
-            color="#42AF4D"
-            onPress={() => {
-              console.log("continue");
-            }}
-          >
-            CONTINUE
-          </RegularButton>
-          <RegularButton
-            color="#FAE36D"
-            onPress={() => {
-              console.log("Kakao");
-            }}
-          >
-            Login with Kakao
-          </RegularButton>
-          <RegularButton
-            color="#ACB7C3"
-            onPress={() => {
-              console.log("Sign up");
-            }}
-          >
-            Sign up
-          </RegularButton>
-        </View>
-      </View>
-    </ScrollView>
+    <>
+      {kakao ? (
+        <KakaoLogin loginHandler={loginHandler} />
+      ) : (
+        <ScrollView style={styles.container}>
+          <View style={styles.imageContainer}>
+            <Image
+              style={styles.image}
+              source={require("../assets/images/logo.png")}
+            />
+          </View>
+          <View style={styles.mainContainer}>
+            <View style={styles.loginContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                ref={emailRef}
+                autoCapitalize="none"
+                keyboardType="email-address"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="password"
+                secureTextEntry={true}
+                ref={passwordRef}
+                autoCapitalize="none"
+              />
+            </View>
+            <View style={styles.loginButtonContainer}>
+              <RegularButton color="#42AF4D" onPress={() => {}}>
+                CONTINUE
+              </RegularButton>
+              <RegularButton
+                color="#FAE36D"
+                onPress={() => {
+                  setKakao(true);
+                }}
+              >
+                Login with Kakao
+              </RegularButton>
+              <RegularButton
+                color="#ACB7C3"
+                onPress={() => {
+                  console.log("Sign up");
+                }}
+              >
+                Sign up
+              </RegularButton>
+            </View>
+          </View>
+        </ScrollView>
+      )}
+    </>
   );
 };
 

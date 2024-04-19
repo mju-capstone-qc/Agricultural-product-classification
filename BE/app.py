@@ -2,19 +2,14 @@ import os #경로와 파일을 다뤄 위치를 지정하거나 삭제함
 import requests #경로를 생성하거나 서버로 오는 요청을 수신
 import numpy as np #수학연산, 행렬 작업
 import tensorflow as tf
-import keras
+import naite_db
 
 from imageio import imsave, imread
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Request, Response
 from tensorflow.keras.models import load_model
 import tensorflow as tf
-from tensorflow.keras.applications import EfficientNetB7
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.optimizers.schedules import ExponentialDecay
-from tensorflow.keras.regularizers import l2
 from tensorflow.keras.preprocessing import image
 
 import os, shutil
@@ -35,6 +30,33 @@ storage_client = storage.Client()
 
 bucket_name = 'exaple_naite'    # 서비스 계정 생성한 bucket 이름 입력
 bucket = storage_client.bucket(bucket_name)
+
+def get_user_info(email: str):
+    # MySQL 연결 설정
+    db_class = naite_db.Database()
+
+    # MySQL 쿼리 실행
+    query = "SELECT user_email, user_name FROM user WHERE user_email = %s"
+    user_info = db_class.executeOne(query, (email,))
+
+    # 연결 및 커서 닫기
+    db_class.close()
+
+    return user_info
+
+def add_user_info(email: str, name: str, user_id: int):
+    # MySQL 연결 설정
+    db_class = naite_db.Database()
+
+    # MySQL 쿼리 실행
+    query = "insert into user(user_email, user_name, user_id) values (%s,%s,%s);"
+    db_class.execute(query, (email, name, user_id))
+
+    db_class.commit()
+    # 연결 및 커서 닫기
+    db_class.close()
+
+    return 'success'
 
 # 현재 시간을 기준으로 고유한 파일 이름 생성
 def generate_unique_filename():
@@ -88,6 +110,9 @@ app = Flask(__name__)
 
 @app.post("/image")
 def imgPost():
+
+    db_class = naite_db.Database()
+
     file = request.json.get('file')
     if file:
         # base64 이미지 데이터를 디코딩하여 이미지로 저장
@@ -130,9 +155,6 @@ def imgPost():
         target_size = (299, 299)
         resized_image = crop_img_pil.resize(target_size)
 
-        # 조정된 이미지 저장
-        resized_image.save('C:\capstone\eeff.png')
-
         destination_blob_name = generate_unique_filename()  # 업로드할 파일을 GCP에 저장할 때의 이름
 
         # 이미지를 Google Cloud Storage에 업로드
@@ -142,6 +164,13 @@ def imgPost():
             output.seek(0)
             blob.upload_from_file(output, content_type='image/jpeg')
         
+        sql = "INSERT INTO photo(user_email, product_id, image_path) VALUES (%s, %s, %s)"
+        values = ('jjjk0605@naver.com',1,'https://storage.googleapis.com/exaple_naite/'+destination_blob_name)
+        print(values)
+        db_class.execute(sql, values)
+        db_class.commit()
+        db_class.close()
+
         x = image.img_to_array(resized_image)
         x = np.expand_dims(x, axis=0)
         x /= 255.
@@ -156,4 +185,71 @@ def imgPost():
         return jsonify({"predicted_percent": class_probabilities, "predicted_class": max_index, "url": 'https://storage.googleapis.com/exaple_naite/'+destination_blob_name})
 
 #flask 실행
+@app.get("/kakao")
+def hello():
+    code = request.args.get('code')
+
+    return ''
+
+@app.post('/kakao/login')
+def login():
+    try:
+        ACCESS_TOKEN = request.json.get('access_token')
+
+        # 카카오 API 호출을 위한 URL 및 헤더 설정
+        url = 'https://kapi.kakao.com/v2/user/me'
+        headers = {
+            'Authorization': f'Bearer {ACCESS_TOKEN}'
+        }
+        # 카카오 API 호출
+        response = requests.get(url, headers=headers)
+        response_data = response.json()
+        if response.ok:
+            user_id = response_data['id']
+            nickname = response_data['properties']['nickname']
+            email = response_data['kakao_account']['email']
+            print(user_id)
+
+            # 사용자 정보 DB에서 조회
+            # 예시로 result 변수에는 DB에서 조회한 결과를 담아야 합니다.
+            # 이 부분은 사용자 정보를 DB에서 조회하고, 결과를 result 변수에 저장하는 코드로 대체되어야 합니다.
+            result = get_user_info(email)
+            print(result)
+            if result:
+                response = {
+                    'result': 'success',
+                    'data': result
+                }
+            else:
+                # 사용자 정보가 DB에 없는 경우, DB에 추가하고 추가된 사용자 정보를 반환합니다.
+                # 예시로 payload 변수에는 새로운 사용자 정보를 담아야 합니다.
+                # 이 부분은 새로운 nickname 정보를 DB에 추가하고, 추가된 사용자 정보를 반환하는 코드로 대체되어야 합니다.
+                add_user_info(email, nickname, user_id)
+                print('hello')
+                data = get_user_info(email)  # 추가된 사용자 정보를 조회하는 코드
+                # 이 부분은 실제 사용되는 데이터베이스 ORM에 맞게 수정되어야 합니다.
+
+                response = {
+                    'result': 'success',
+                    'data': data
+                }
+
+        else:
+            # 카카오 API 호출이 실패한 경우 에러 응답 반환
+            response = {
+                'result': 'fail',
+                'error': '카카오 API 호출 실패'
+            }
+
+    except Exception as e:
+        # 예외가 발생한 경우 에러 응답 반환
+        response = {
+            'result': 'fail',
+            'error': str(e)
+        }
+
+    # JSON 형태로 응답 반환
+    return response
+
+
 app.run(host='0.0.0.0', port=5000, debug=False)

@@ -23,4 +23,5 @@ export type kakaoLogin = {
 export type info = {
   efficacy: string;
   select_tip: string;
+  standard: string;
 };

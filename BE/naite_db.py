@@ -9,12 +9,13 @@ class Database():
     load_dotenv()
     dbName = os.environ.get('MYSQL_NAME')
     dbPW = os.environ.get('MYSQL_PW')
-    self.db = pymysql.connect(host='localhost',
-                     port=3306,
-                     user='root',
-                     db=dbName,
-                     passwd=dbPW,
-                     charset='utf8')
+    dbHost = os.environ.get('MYSQL_HOST')
+    self.db = pymysql.connect(host=dbHost,
+                              port=3306,
+                              user='root',
+                              db=dbName,
+                              passwd=dbPW,
+                              charset='utf8')
     self.cursor = self.db.cursor(pymysql.cursors.DictCursor)
 
   def execute(self, query, args={}):

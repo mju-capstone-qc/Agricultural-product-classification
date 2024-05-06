@@ -1,13 +1,32 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-
-const ResultTip = () => {
-  const title = { cabbage: "좋은 양배추 선별 TIP!" };
-  const content = {
-    cabbage:
-      "과도하게 벌레가 먹지 않고, 겉표면이 무리지 않은 것을 찾아보세요!\n\n\
-속에 추대가 올라오지 않은 것, 밑동 부분이 갈라지지 않은 것, 변색이 되지 않은 것이 건강한 양배추임을 보여준답니다!\n\n\
-친환경 양배추는 성장촉진제 및 성장억제제를 사용하지 않아 계절마다 중량 및 크기가 일정하지 않습니다.",
+import { products } from "../types/type";
+import { useEffect, useState } from "react";
+import { getTip } from "../utils/information";
+type Props = {
+  label: products;
+};
+const ResultTip = ({ label }: Props) => {
+  const title = {
+    cabbage: "양배추",
+    fuji_apple: "부사사과",
+    yanggwang_apple: "양왕사과",
+    radish: "무",
   };
+
+  const [tip, setTip] = useState<string>();
+
+  useEffect(() => {
+    const fetchedTip = async () => {
+      try {
+        const fetchedTip = await getTip(label);
+        setTip(fetchedTip);
+      } catch (error) {
+        console.log("Error getting info: ", error);
+      }
+    };
+
+    fetchedTip();
+  }, [label]);
   return (
     <View
       style={{
@@ -18,8 +37,8 @@ const ResultTip = () => {
       }}
     >
       <ScrollView>
-        <Text style={styles.tipTitle}>{title.cabbage}</Text>
-        <Text style={styles.tipText}>{content.cabbage}</Text>
+        <Text style={styles.tipTitle}>좋은 {title[label]} 선별 TIP!</Text>
+        <Text style={styles.tipText}>{tip}</Text>
       </ScrollView>
     </View>
   );

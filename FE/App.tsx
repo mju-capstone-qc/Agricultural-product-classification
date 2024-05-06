@@ -2,34 +2,95 @@ import LoginScreen from "./screens/LoginScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import HomeScreen from "./screens/HomeScreen";
-import { Image, Text, View, StyleSheet } from "react-native";
+import { Image, Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import ResultScreen from "./screens/ResultScreen";
 import { useEffect, useState } from "react";
 import { getLoginInfo } from "./utils/login";
 import axios, { AxiosResponse } from "axios";
-import { KAKAO_CLIENT_SECRET, KAKAO_REST_API } from "@env";
+import { KAKAO_CLIENT_SECRET, KAKAO_REST_API, URI } from "@env";
 import { kakao } from "./types/type";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const Drawer = createDrawerNavigator();
+const Stack = createNativeStackNavigator();
+
+type Props = {
+  curScreenHandler: (screen: string) => void;
+};
+
+const StackNavigator = ({ curScreenHandler }: Props) => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerTintColor: "black",
+      }}
+    >
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          headerShown: false,
+          headerTitle: "",
+        }}
+        listeners={({ navigation, route }) => ({
+          state: (e) => {
+            // 화면 변경 시 currentScreen 상태 업데이트
+            curScreenHandler(e.data.state.routes[e.data.state.index].name);
+          },
+        })}
+      />
+      <Stack.Screen
+        name="Result"
+        component={ResultScreen}
+        options={{
+          headerTitle: () => (
+            <View style={styles.title}>
+              <Text style={styles.titleText}>진단 확인하기</Text>
+              <Image
+                style={styles.logo}
+                source={require("./assets/images/logo_no_title.png")}
+              />
+            </View>
+          ),
+        }}
+        listeners={({ navigation, route }) => ({
+          state: (e) => {
+            // 화면 변경 시 currentScreen 상태 업데이트
+            curScreenHandler(e.data.state.routes[e.data.state.index].name);
+          },
+        })}
+      />
+    </Stack.Navigator>
+  );
+};
 
 export default function App() {
   const [login, setLogin] = useState(false);
+  const [currentScreen, setCurrentScreen] = useState("NAITE");
+  const curScreenHandler = (screen: string) => {
+    setCurrentScreen(screen);
+  };
 
   useEffect(() => {
     const autoLogin = async () => {
       const loginInfo = await getLoginInfo();
       if (loginInfo) {
-        const response: AxiosResponse<kakao> = await axios.post(
-          "https://kauth.kakao.com/oauth/token",
-          `grant_type=refresh_token&client_id=${KAKAO_REST_API}&refresh_token=${loginInfo}&client_secret=${KAKAO_CLIENT_SECRET}`,
-          {
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-            },
-          }
-        );
-        const newAccessToken = response.data;
-        if (newAccessToken) loginHandler(true);
+        try {
+          const response: AxiosResponse<kakao> = await axios.post(
+            "https://kauth.kakao.com/oauth/token",
+            `grant_type=refresh_token&client_id=${KAKAO_REST_API}&refresh_token=${loginInfo}&client_secret=${KAKAO_CLIENT_SECRET}`,
+            {
+              headers: {
+                "Content-Type":
+                  "application/x-www-form-urlencoded;charset=utf-8",
+              },
+            }
+          );
+          const newAccessToken = response.data;
+          if (newAccessToken) loginHandler(true);
+        } catch (error) {
+          console.error("Error refreshing token:", error);
+        }
       }
     };
     autoLogin();
@@ -38,56 +99,42 @@ export default function App() {
   const loginHandler = (logined: boolean) => {
     setLogin(logined);
   };
+
   return (
-    <>
-      <NavigationContainer>
-        {login ? (
-          <Drawer.Navigator
-            screenOptions={{
-              headerTitleAlign: "center",
-              drawerItemStyle: { backgroundColor: "white" },
-              drawerActiveTintColor: "#27C077",
-              headerTintColor: "black",
+    <NavigationContainer>
+      {!login ? (
+        <Drawer.Navigator
+          screenOptions={{
+            headerShown: currentScreen !== "Result",
+            headerTitleAlign: "center",
+            drawerItemStyle: { backgroundColor: "white" },
+            drawerActiveTintColor: "#27C077",
+            headerTintColor: "black",
+          }}
+          initialRouteName="NAITE"
+        >
+          <Drawer.Screen
+            name="NAITE"
+            options={{
+              headerTitle: () => (
+                <View style={styles.title}>
+                  <Text style={styles.titleText}>NAITE</Text>
+                  <Image
+                    style={styles.logo}
+                    source={require("./assets/images/logo_no_title.png")}
+                  />
+                </View>
+              ),
+              drawerLabel: "진단하기",
             }}
           >
-            <Drawer.Screen
-              name="NAITE"
-              component={HomeScreen}
-              options={{
-                headerTitle: () => (
-                  <View style={styles.title}>
-                    <Text style={styles.titleText}>NAITE</Text>
-                    <Image
-                      style={styles.logo}
-                      source={require("./assets/images/logo_no_title.png")}
-                    />
-                  </View>
-                ),
-                title: "진단하기",
-              }}
-            />
-            <Drawer.Screen
-              name="Result"
-              component={ResultScreen}
-              options={{
-                headerTitle: () => (
-                  <View style={styles.title}>
-                    <Text style={styles.titleText}>진단 확인하기</Text>
-                    <Image
-                      style={styles.logo}
-                      source={require("./assets/images/logo_no_title.png")}
-                    />
-                  </View>
-                ),
-                title: "진단하기",
-              }}
-            />
-          </Drawer.Navigator>
-        ) : (
-          <LoginScreen loginHandler={loginHandler} />
-        )}
-      </NavigationContainer>
-    </>
+            {() => <StackNavigator curScreenHandler={curScreenHandler} />}
+          </Drawer.Screen>
+        </Drawer.Navigator>
+      ) : (
+        <LoginScreen loginHandler={loginHandler} />
+      )}
+    </NavigationContainer>
   );
 }
 

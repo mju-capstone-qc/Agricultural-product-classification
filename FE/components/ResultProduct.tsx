@@ -1,6 +1,12 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 
-const ResultProduct = () => {
+type Props = {
+  predicted_class: 0 | 1 | 2;
+  url: string;
+};
+
+const ResultProduct = ({ predicted_class, url }: Props) => {
+  const grade = { 0: "특", 1: "상", 2: "보통" };
   return (
     <View
       style={{
@@ -11,7 +17,7 @@ const ResultProduct = () => {
     >
       <Image
         style={styles.informationImage}
-        source={require("../assets/images/cabbage.png")}
+        source={{ uri: url }}
         resizeMode="contain"
       />
       <View
@@ -22,7 +28,7 @@ const ResultProduct = () => {
       >
         <Text style={styles.informationLabel}>진단결과: </Text>
         <Text style={{ ...styles.informationLabel, ...styles.gradeText }}>
-          특
+          {grade[predicted_class]}
         </Text>
       </View>
     </View>

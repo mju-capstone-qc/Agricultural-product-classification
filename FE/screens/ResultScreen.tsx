@@ -3,8 +3,23 @@ import RegularButton from "../components/RegularButton";
 import ResultLabel from "../components/ResultLabel";
 import ResultProduct from "../components/ResultProduct";
 import ResultTip from "../components/ResultTip";
+import { RouteProp } from "@react-navigation/native";
+import { products, result } from "../types/type";
 
-const ResultScreen = () => {
+type RootStackParamList = {
+  Result: { result: result; label: products };
+};
+
+type ResultScreenRouteProp = RouteProp<RootStackParamList, "Result">;
+
+type Props = {
+  route?: ResultScreenRouteProp;
+};
+
+const ResultScreen = ({ route }: Props) => {
+  const { predicted_class, url } = route!.params.result;
+  const label = route!.params.label;
+  console.log(label);
   return (
     <>
       <View style={styles.container}>
@@ -14,11 +29,11 @@ const ResultScreen = () => {
             width: "100%",
           }}
         >
-          <ResultLabel />
+          <ResultLabel label={label} />
           <View style={{ flex: 1 }}>
-            <ResultProduct />
+            <ResultProduct predicted_class={predicted_class} url={url} />
             <View style={{ flex: 3 }}>
-              <ResultTip />
+              <ResultTip label={label} />
               <View style={styles.button}>
                 <RegularButton onPress={() => {}} color="#42AF4D">
                   등급선별기준 확인하기

@@ -1,8 +1,8 @@
-export type products = "cabbage" | "apple" | "radish";
+export type products = "cabbage" | "fuji_apple" | "yanggwang_apple" | "radish";
 
 export type result = {
   predicted_percent: number[];
-  predicted_class: number;
+  predicted_class: 0 | 1 | 2;
   url: string;
 };
 
@@ -18,4 +18,9 @@ export type kakao = {
 export type kakaoLogin = {
   data: { user_email: string; user_name: string };
   result: string;
+};
+
+export type info = {
+  efficacy: string;
+  select_tip: string;
 };

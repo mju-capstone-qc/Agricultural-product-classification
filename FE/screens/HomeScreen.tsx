@@ -1,19 +1,26 @@
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import Background from "../components/Background";
 import CameraButton from "../components/CameraButton";
 import InfoImage from "../components/InfoImage";
 import InfoText from "../components/InfoText";
+import Delete from "../components/Delete";
 
 const HomeScreen = () => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
     { label: "양배추", value: "cabbage" },
-    { label: "사과", value: "apple" },
+    { label: "부사사과", value: "fuji_apple" },
+    { label: "양왕사과", value: "yanggwang_apple" },
     { label: "무", value: "radish" },
   ]);
+  const [loading, setLoading] = useState(false);
+
+  const loadingHandler = (bool: boolean) => {
+    setLoading(bool);
+  };
 
   return (
     <>
@@ -24,6 +31,7 @@ const HomeScreen = () => {
           }}
         >
           <View style={styles.dropDown}>
+            {/* <Delete></Delete> */}
             <View style={{ top: "20%" }}>
               <Text style={styles.text}>농산물 선택하기</Text>
               <DropDownPicker
@@ -55,8 +63,17 @@ const HomeScreen = () => {
             <></>
           )}
         </View>
-        {!value ? <Background /> : <CameraButton />}
+        {!value ? (
+          <Background />
+        ) : (
+          <CameraButton label={value} loadingHandler={loadingHandler} />
+        )}
       </View>
+      {loading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#42AF4D" />
+        </View>
+      )}
     </>
   );
 };
@@ -86,6 +103,13 @@ const styles = StyleSheet.create({
   information: {
     alignItems: "center",
     flex: 1,
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.5)", // 투명도 조절
+    zIndex: 9999, // z-index 설정
   },
 });
 

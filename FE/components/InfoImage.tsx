@@ -8,13 +8,15 @@ type Props = {
 const InfoImage = ({ value }: Props) => {
   const images = {
     cabbage: require("../assets/images/cabbage.png"),
-    apple: require("../assets/images/apple.png"),
+    fuji_apple: require("../assets/images/apple.png"),
+    yanggwang_apple: require("../assets/images/apple.png"),
     radish: require("../assets/images/radish.png"),
   };
 
   const names = {
     cabbage: "양배추",
-    apple: "사과",
+    fuji_apple: "부사사과",
+    yanggwang_apple: "양왕사과",
     radish: "무",
   };
 
@@ -37,8 +39,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   informationImage: {
-    width: 135,
-    height: 135,
+    width: 130,
+    height: 130,
   },
 });
 

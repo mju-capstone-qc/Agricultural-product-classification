@@ -32,7 +32,7 @@ const StackNavigator = ({ curScreenHandler }: Props) => {
           headerShown: false,
           headerTitle: "",
         }}
-        listeners={({ navigation, route }) => ({
+        listeners={({ }) => ({
           state: (e) => {
             // 화면 변경 시 currentScreen 상태 업데이트
             curScreenHandler(e.data.state.routes[e.data.state.index].name);

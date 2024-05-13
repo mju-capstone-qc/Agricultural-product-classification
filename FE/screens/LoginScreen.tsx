@@ -2,6 +2,9 @@ import { useRef, useState } from "react";
 import { Image, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import RegularButton from "../components/RegularButton";
 import KakaoLogin from "../components/KakaoLogin";
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ParamListBase } from "@react-navigation/routers";
 
 type props = {
   loginHandler: (logined: boolean) => void;
@@ -12,6 +15,9 @@ const LoginScreen = ({ loginHandler }: props) => {
 
   const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
+  
+  const navigation = useNavigation();
+  
   return (
     <>
       {kakao ? (
@@ -56,6 +62,8 @@ const LoginScreen = ({ loginHandler }: props) => {
               <RegularButton
                 color="#ACB7C3"
                 onPress={() => {
+                  //@ts-ignore
+                  navigation.navigate('Register'); // Register 화면으로 이동
                   console.log("Sign up");
                 }}
               >

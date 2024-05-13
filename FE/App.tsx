@@ -10,6 +10,9 @@ import axios, { AxiosResponse } from "axios";
 import { KAKAO_CLIENT_SECRET, KAKAO_REST_API, URI } from "@env";
 import { kakao } from "./types/type";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import RegisterScreen from "./screens/RegisterScreen";
+import { useNavigation } from "@react-navigation/native";
+
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -60,9 +63,50 @@ const StackNavigator = ({ curScreenHandler }: Props) => {
           },
         })}
       />
+      <Stack.Screen
+        name="Register"
+        component={RegisterScreen}
+        options={{
+          headerShown: false,
+          headerTitle: "",
+        }}
+      />
     </Stack.Navigator>
   );
 };
+
+type RegisterProps = {
+  loginHandler: (logined: boolean) => void;
+};
+const StackNavigatorRegister = ({ loginHandler }: RegisterProps) => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerTintColor: "black",
+      }}
+    >
+      <Stack.Screen
+        name="Login"
+        options={{
+          headerShown: false,
+          headerTitle: "",
+        }}
+      >
+        {() => <LoginScreen loginHandler={loginHandler} />}
+      </Stack.Screen>
+      <Stack.Screen
+        name="Register"
+        component={RegisterScreen}
+        options={{
+          headerShown: false,
+          headerTitle: "",
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+
 
 export default function App() {
   const [login, setLogin] = useState(false);
@@ -99,10 +143,16 @@ export default function App() {
   const loginHandler = (logined: boolean) => {
     setLogin(logined);
   };
+  const handleRegister = () => {
+    // 여기에 회원가입 로직을 구현합니다.
+    // 예: 회원가입 성공 후 로그인 상태를 업데이트합니다.
+    loginHandler(true);
+  };
+  const navigation = useNavigation();
 
   return (
     <NavigationContainer>
-      {!login ? (
+      {login ? (
         <Drawer.Navigator
           screenOptions={{
             headerShown: currentScreen !== "Result",
@@ -132,7 +182,9 @@ export default function App() {
           </Drawer.Screen>
         </Drawer.Navigator>
       ) : (
-        <LoginScreen loginHandler={loginHandler} />
+        <StackNavigatorRegister loginHandler={loginHandler}/>
+        //<LoginScreen loginHandler={loginHandler} />
+        //<RegisterScreen registerHandler={handleRegister} />
       )}
     </NavigationContainer>
   );

@@ -11,6 +11,7 @@ import { KAKAO_CLIENT_SECRET, KAKAO_REST_API, URI } from "@env";
 import { kakao, login } from "./types/type";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import RegisterScreen from "./screens/RegisterScreen";
+import CustomDrawerContent from "./components/CustomDrawerContent";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -100,7 +101,7 @@ const StackNavigatorRegister = ({ loginHandler }: RegisterProps) => {
 };
 
 export default function App() {
-  const [login, setLogin] = useState<login | null>();
+  const [login, setLogin] = useState<login | null>(null);
   const [currentScreen, setCurrentScreen] = useState("NAITE");
   const curScreenHandler = (screen: string) => {
     setCurrentScreen(screen);
@@ -145,6 +146,9 @@ export default function App() {
     <NavigationContainer>
       {login ? (
         <Drawer.Navigator
+          drawerContent={(props) => (
+            <CustomDrawerContent {...props} setLogin={setLogin} />
+          )} // 커스텀 드로어 콘텐츠 사용
           screenOptions={{
             headerShown: currentScreen !== "Result",
             headerTitleAlign: "center",

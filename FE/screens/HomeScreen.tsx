@@ -7,7 +7,11 @@ import InfoImage from "../components/InfoImage";
 import InfoText from "../components/InfoText";
 import Delete from "../components/Delete";
 
-const HomeScreen = () => {
+type Props = {
+  login: string;
+};
+
+const HomeScreen = ({ login }: Props) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
@@ -21,6 +25,8 @@ const HomeScreen = () => {
   const loadingHandler = (bool: boolean) => {
     setLoading(bool);
   };
+
+  console.log("현재 로그인: ", login);
 
   return (
     <>
@@ -66,7 +72,11 @@ const HomeScreen = () => {
         {!value ? (
           <Background />
         ) : (
-          <CameraButton label={value} loadingHandler={loadingHandler} />
+          <CameraButton
+            login={login}
+            label={value}
+            loadingHandler={loadingHandler}
+          />
         )}
       </View>
       {loading && (

@@ -12,9 +12,10 @@ import { result } from "../types/type";
 type Props = {
   label: string;
   loadingHandler: (bool: boolean) => void;
+  login: string;
 };
 
-const CameraButton = ({ label, loadingHandler }: Props) => {
+const CameraButton = ({ label, login, loadingHandler }: Props) => {
   console.log(URI);
   const [cameraPermissionInformation, requestPermission] =
     useCameraPermissions();
@@ -61,6 +62,7 @@ const CameraButton = ({ label, loadingHandler }: Props) => {
           .post(`${URI}/image`, {
             file: image.assets[0].base64,
             label: label,
+            email: login,
           })
           .then((res: AxiosResponse<result>) => res.data);
         console.log(result);

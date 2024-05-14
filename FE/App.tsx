@@ -17,9 +17,10 @@ const Stack = createNativeStackNavigator();
 
 type Props = {
   curScreenHandler: (screen: string) => void;
+  login: string;
 };
 
-const StackNavigator = ({ curScreenHandler }: Props) => {
+const StackNavigator = ({ curScreenHandler, login }: Props) => {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -28,18 +29,19 @@ const StackNavigator = ({ curScreenHandler }: Props) => {
     >
       <Stack.Screen
         name="Home"
-        component={HomeScreen}
         options={{
           headerShown: false,
           headerTitle: "",
         }}
-        listeners={({ navigation, route }) => ({
+        listeners={() => ({
           state: (e) => {
             // 화면 변경 시 currentScreen 상태 업데이트
             curScreenHandler(e.data.state.routes[e.data.state.index].name);
           },
         })}
-      />
+      >
+        {() => <HomeScreen login={login} />}
+      </Stack.Screen>
       <Stack.Screen
         name="Result"
         component={ResultScreen}
@@ -54,7 +56,7 @@ const StackNavigator = ({ curScreenHandler }: Props) => {
             </View>
           ),
         }}
-        listeners={({ navigation, route }) => ({
+        listeners={() => ({
           state: (e) => {
             // 화면 변경 시 currentScreen 상태 업데이트
             curScreenHandler(e.data.state.routes[e.data.state.index].name);
@@ -66,7 +68,7 @@ const StackNavigator = ({ curScreenHandler }: Props) => {
 };
 
 type RegisterProps = {
-  loginHandler: (logined: boolean) => void;
+  loginHandler: (logined: string) => void;
 };
 
 const StackNavigatorRegister = ({ loginHandler }: RegisterProps) => {
@@ -98,7 +100,7 @@ const StackNavigatorRegister = ({ loginHandler }: RegisterProps) => {
 };
 
 export default function App() {
-  const [login, setLogin] = useState(false);
+  const [login, setLogin] = useState<string | null>();
   const [currentScreen, setCurrentScreen] = useState("NAITE");
   const curScreenHandler = (screen: string) => {
     setCurrentScreen(screen);
@@ -107,11 +109,11 @@ export default function App() {
   useEffect(() => {
     const autoLogin = async () => {
       const loginInfo = await getLoginInfo();
-      if (loginInfo) {
+      if (loginInfo?.platform === "kakao") {
         try {
           const response: AxiosResponse<kakao> = await axios.post(
             "https://kauth.kakao.com/oauth/token",
-            `grant_type=refresh_token&client_id=${KAKAO_REST_API}&refresh_token=${loginInfo}&client_secret=${KAKAO_CLIENT_SECRET}`,
+            `grant_type=refresh_token&client_id=${KAKAO_REST_API}&refresh_token=${loginInfo.refresh}&client_secret=${KAKAO_CLIENT_SECRET}`,
             {
               headers: {
                 "Content-Type":
@@ -120,22 +122,27 @@ export default function App() {
             }
           );
           const newAccessToken = response.data;
-          if (newAccessToken) loginHandler(true);
+          if (newAccessToken) loginHandler("kakao");
         } catch (error) {
           console.error("Error refreshing token:", error);
         }
+      }
+
+      if (loginInfo?.platform === "local") {
+        console.log("자동로그인");
+        setLogin(loginInfo.email);
       }
     };
     autoLogin();
   }, []);
 
-  const loginHandler = (logined: boolean) => {
+  const loginHandler = (logined: string) => {
     setLogin(logined);
   };
 
   return (
     <NavigationContainer>
-      {!login ? (
+      {login ? (
         <Drawer.Navigator
           screenOptions={{
             headerShown: currentScreen !== "Result",
@@ -161,7 +168,12 @@ export default function App() {
               drawerLabel: "진단하기",
             }}
           >
-            {() => <StackNavigator curScreenHandler={curScreenHandler} />}
+            {() => (
+              <StackNavigator
+                login={login}
+                curScreenHandler={curScreenHandler}
+              />
+            )}
           </Drawer.Screen>
         </Drawer.Navigator>
       ) : (

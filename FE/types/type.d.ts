@@ -25,3 +25,9 @@ export type info = {
   select_tip: string;
   standard: string;
 };
+
+export type saveLogin = {
+  platform: string;
+  refresh?: string;
+  email?: string;
+};

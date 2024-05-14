@@ -9,7 +9,7 @@ import { getLoginInfo, saveLoginInfo } from "../utils/login";
 const runFirst = `window.ReactNativeWebView.postMessage("this is message from web");`;
 
 type props = {
-  loginHandler: (logined: boolean) => void;
+  loginHandler: (logined: string) => void;
 };
 
 const KakaoLogin = ({ loginHandler }: props) => {
@@ -54,7 +54,7 @@ const KakaoLogin = ({ loginHandler }: props) => {
           returnValue = response.data.access_token;
           const refresh = response.data.refresh_token;
           console.log("refresh", refresh);
-          saveLoginInfo(refresh);
+          saveLoginInfo({ platform: "kakao", refresh: refresh });
           axios
             .post(`${URI}/kakao/login`, {
               access_token: returnValue,
@@ -62,7 +62,7 @@ const KakaoLogin = ({ loginHandler }: props) => {
             .then((res: AxiosResponse<kakaoLogin>) => {
               console.log(res.data);
               if (res.data.result === "success") {
-                loginHandler(true);
+                loginHandler("kakao");
               }
             });
         })

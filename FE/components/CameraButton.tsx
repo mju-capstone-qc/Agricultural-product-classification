@@ -15,6 +15,7 @@ type Props = {
 };
 
 const CameraButton = ({ label, loadingHandler }: Props) => {
+  console.log(URI);
   const [cameraPermissionInformation, requestPermission] =
     useCameraPermissions();
 

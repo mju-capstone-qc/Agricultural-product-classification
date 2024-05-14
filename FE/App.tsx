@@ -10,6 +10,7 @@ import axios, { AxiosResponse } from "axios";
 import { KAKAO_CLIENT_SECRET, KAKAO_REST_API, URI } from "@env";
 import { kakao } from "./types/type";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import RegisterScreen from "./screens/RegisterScreen";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -59,6 +60,38 @@ const StackNavigator = ({ curScreenHandler }: Props) => {
             curScreenHandler(e.data.state.routes[e.data.state.index].name);
           },
         })}
+      />
+    </Stack.Navigator>
+  );
+};
+
+type RegisterProps = {
+  loginHandler: (logined: boolean) => void;
+};
+
+const StackNavigatorRegister = ({ loginHandler }: RegisterProps) => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerTintColor: "black",
+      }}
+    >
+      <Stack.Screen
+        name="Login"
+        options={{
+          headerShown: false,
+          headerTitle: "",
+        }}
+      >
+        {() => <LoginScreen loginHandler={loginHandler} />}
+      </Stack.Screen>
+      <Stack.Screen
+        name="Register"
+        component={RegisterScreen}
+        options={{
+          headerShown: false,
+          headerTitle: "",
+        }}
       />
     </Stack.Navigator>
   );
@@ -132,7 +165,7 @@ export default function App() {
           </Drawer.Screen>
         </Drawer.Navigator>
       ) : (
-        <LoginScreen loginHandler={loginHandler} />
+        <StackNavigatorRegister loginHandler={loginHandler} />
       )}
     </NavigationContainer>
   );

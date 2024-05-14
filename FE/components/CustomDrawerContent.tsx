@@ -56,7 +56,7 @@ const CustomDrawerContent: React.FC<CustomDrawerContentProps> = (props) => {
 const styles = StyleSheet.create({
   logoutContainer: {
     paddingHorizontal: 20,
-    paddingVertical: "10%",
+    paddingVertical: "5%",
     flexDirection: "row",
   },
   logoutButton: {

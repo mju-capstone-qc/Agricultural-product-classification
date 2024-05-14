@@ -9,7 +9,7 @@ import { getLoginInfo, saveLoginInfo } from "../utils/login";
 const runFirst = `window.ReactNativeWebView.postMessage("this is message from web");`;
 
 type props = {
-  loginHandler: (logined: string) => void;
+  loginHandler: (platform: string, email: string) => void;
 };
 
 const KakaoLogin = ({ loginHandler }: props) => {
@@ -62,7 +62,7 @@ const KakaoLogin = ({ loginHandler }: props) => {
             .then((res: AxiosResponse<kakaoLogin>) => {
               console.log(res.data);
               if (res.data.result === "success") {
-                loginHandler("kakao");
+                loginHandler("kakao", "");
               }
             });
         })

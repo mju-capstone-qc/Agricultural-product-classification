@@ -6,9 +6,10 @@ import CameraButton from "../components/CameraButton";
 import InfoImage from "../components/InfoImage";
 import InfoText from "../components/InfoText";
 import Delete from "../components/Delete";
+import { login } from "../types/type";
 
 type Props = {
-  login: string;
+  login: login;
 };
 
 const HomeScreen = ({ login }: Props) => {
@@ -26,7 +27,7 @@ const HomeScreen = ({ login }: Props) => {
     setLoading(bool);
   };
 
-  console.log("현재 로그인: ", login);
+  console.log("현재 로그인: ", login.email);
 
   return (
     <>
@@ -73,7 +74,7 @@ const HomeScreen = ({ login }: Props) => {
           <Background />
         ) : (
           <CameraButton
-            login={login}
+            email={login.email}
             label={value}
             loadingHandler={loadingHandler}
           />

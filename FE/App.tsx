@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { getLoginInfo } from "./utils/login";
 import axios, { AxiosResponse } from "axios";
 import { KAKAO_CLIENT_SECRET, KAKAO_REST_API, URI } from "@env";
-import { kakao } from "./types/type";
+import { kakao, login } from "./types/type";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import RegisterScreen from "./screens/RegisterScreen";
 
@@ -17,7 +17,7 @@ const Stack = createNativeStackNavigator();
 
 type Props = {
   curScreenHandler: (screen: string) => void;
-  login: string;
+  login: login;
 };
 
 const StackNavigator = ({ curScreenHandler, login }: Props) => {
@@ -68,7 +68,7 @@ const StackNavigator = ({ curScreenHandler, login }: Props) => {
 };
 
 type RegisterProps = {
-  loginHandler: (logined: string) => void;
+  loginHandler: (platform: string, email: string) => void;
 };
 
 const StackNavigatorRegister = ({ loginHandler }: RegisterProps) => {
@@ -100,7 +100,7 @@ const StackNavigatorRegister = ({ loginHandler }: RegisterProps) => {
 };
 
 export default function App() {
-  const [login, setLogin] = useState<string | null>();
+  const [login, setLogin] = useState<login | null>();
   const [currentScreen, setCurrentScreen] = useState("NAITE");
   const curScreenHandler = (screen: string) => {
     setCurrentScreen(screen);
@@ -122,22 +122,23 @@ export default function App() {
             }
           );
           const newAccessToken = response.data;
-          if (newAccessToken) loginHandler("kakao");
+          console.log(newAccessToken);
+          // if (newAccessToken) loginHandler("kakao");
         } catch (error) {
           console.error("Error refreshing token:", error);
         }
       }
 
-      if (loginInfo?.platform === "local") {
+      if (loginInfo?.platform === "local" && loginInfo.email) {
         console.log("자동로그인");
-        setLogin(loginInfo.email);
+        setLogin({ platform: "local", email: loginInfo.email });
       }
     };
     autoLogin();
   }, []);
 
-  const loginHandler = (logined: string) => {
-    setLogin(logined);
+  const loginHandler = (platform: string, email: string) => {
+    setLogin({ platform: platform, email: email });
   };
 
   return (

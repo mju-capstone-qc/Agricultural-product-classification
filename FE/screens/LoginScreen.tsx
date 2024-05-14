@@ -17,7 +17,7 @@ import { URI } from "@env";
 import { saveLoginInfo } from "../utils/login";
 
 type props = {
-  loginHandler: (logined: string) => void;
+  loginHandler: (platform: string, email: string) => void;
 };
 
 const LoginScreen = ({ loginHandler }: props) => {
@@ -40,7 +40,7 @@ const LoginScreen = ({ loginHandler }: props) => {
         password: password,
       });
       if (response.status === 200 && response.data.exist === 1) {
-        loginHandler(email);
+        loginHandler("local", email);
         saveLoginInfo({ platform: "local", email: email });
       }
     } catch (error) {

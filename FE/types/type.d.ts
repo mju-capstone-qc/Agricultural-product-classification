@@ -31,3 +31,8 @@ export type saveLogin = {
   refresh?: string;
   email?: string;
 };
+
+export type login = {
+  platform: string;
+  email: string;
+};

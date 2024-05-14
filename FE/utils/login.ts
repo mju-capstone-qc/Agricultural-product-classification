@@ -43,7 +43,14 @@ export const getLoginInfo = async () => {
 // 로그아웃 정보를 저장하는 함수
 export const saveLogoutInfo = async () => {
   try {
-    await AsyncStorage.removeItem("@loginInfo");
+    const platform = await AsyncStorage.getItem("@platform");
+    if (platform === "kakao") {
+      await AsyncStorage.removeItem("@refresh");
+    }
+    if (platform === "local") {
+      await AsyncStorage.removeItem("@email");
+    }
+    await AsyncStorage.removeItem("@platform");
     console.log("remove");
   } catch (error) {
     console.error("Error saving login info:", error);

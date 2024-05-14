@@ -23,4 +23,16 @@ export type kakaoLogin = {
 export type info = {
   efficacy: string;
   select_tip: string;
+  standard: string;
+};
+
+export type saveLogin = {
+  platform: string;
+  refresh?: string;
+  email?: string;
+};
+
+export type login = {
+  platform: string;
+  email: string;
 };

@@ -103,7 +103,7 @@ def process_and_save_image(file, bucket, model, product_id:int):
 
 def getInfo(product_id):
     db_class = naite_db.Database()
-    sql = "SELECT * FROM Information JOIN Products ON Information.product_id=Products.product_id WHERE Products.product_name=%s;"
+    sql = "SELECT select_tip, efficacy, standard FROM Information JOIN Products ON Information.product_id=Products.product_id WHERE Products.product_name=%s;"
     info = db_class.executeOne(sql, (product_id))
     db_class.close()
     return info

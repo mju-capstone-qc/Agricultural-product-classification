@@ -3,6 +3,7 @@ import { URI } from "@env";
 import { info } from "../types/type";
 
 export const getInfo = async (label: string) => {
+  console.log(URI);
   try {
     const info = await axios
       .post(`${URI}/info`, {

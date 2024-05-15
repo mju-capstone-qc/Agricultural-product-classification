@@ -42,7 +42,7 @@ def f1_m(y_true, y_pred):
 
 
 
-def process_and_save_image(file, bucket, model, product_id:int):
+def process_and_save_image(email, file, bucket, model, product_id:int):
     db_class = naite_db.Database()
     # base64 이미지 데이터를 디코딩하여 이미지로 변환
     image_data = base64.b64decode(file)
@@ -82,7 +82,7 @@ def process_and_save_image(file, bucket, model, product_id:int):
         blob.upload_from_file(output, content_type='image/jpeg')
 
     sql = "INSERT INTO Photos(user_email, product_id, image_path) VALUES (%s, %s, %s)"
-    values = ('jjjk0605@naver.com',product_id,'https://storage.googleapis.com/exaple_naite/'+destination_blob_name)
+    values = (email,product_id,'https://storage.googleapis.com/exaple_naite/'+destination_blob_name)
     db_class.execute(sql, values)
     db_class.commit()
     db_class.close()
@@ -93,7 +93,6 @@ def process_and_save_image(file, bucket, model, product_id:int):
 
     output = model.predict(x)
     class_probabilities = tf.nn.softmax(output[0]).numpy().tolist()
-    print(class_probabilities)
 
     max_value = max(class_probabilities)
     max_index = class_probabilities.index(max_value)
@@ -108,3 +107,16 @@ def getInfo(product_id):
     db_class.close()
     return info
 
+def localLogin(email, password):
+    db_class = naite_db.Database()
+    sql = "SELECT EXISTS (SELECT 1 FROM Users WHERE user_email=%s AND user_password=%s) as exist;"
+    exist = db_class.executeOne(sql, (email, password))
+    db_class.close()
+    return exist
+
+def getHistory(email):
+    db_class = naite_db.Database()
+    sql = "SELECT R.result_id, P.product_name, R.grade_id, R.date, PH.image_path FROM Result R JOIN Photos PH ON R.photo_id = PH.photo_id AND R.user_email = PH.user_email AND R.product_id = PH.product_id JOIN Products P ON R.product_id = P.product_id WHERE R.user_email = %s;"
+    hist = db_class.executeAll(sql,(email))
+    db_class.close()
+    return hist

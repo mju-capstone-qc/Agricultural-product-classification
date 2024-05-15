@@ -15,6 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { URI } from "@env";
 import { saveLoginInfo } from "../utils/login";
+import ErrorModal from "../components/ErrorModal";
 
 type props = {
   loginHandler: (platform: string, email: string) => void;
@@ -42,10 +43,17 @@ const LoginScreen = ({ loginHandler }: props) => {
       if (response.status === 200 && response.data.exist === 1) {
         loginHandler("local", email);
         saveLoginInfo({ platform: "local", email: email });
+      } else if (response.status === 200 && response.data.exist === 0) {
+        setModal(true);
+        return;
       }
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const setHidden = () => {
+    setModal(false);
   };
   return (
     <>
@@ -53,23 +61,11 @@ const LoginScreen = ({ loginHandler }: props) => {
         <KakaoLogin loginHandler={loginHandler} />
       ) : (
         <ScrollView style={styles.container}>
-          <Modal visible={modal} animationType="fade" transparent={true}>
-            <View style={styles.modalBackground}>
-              <View style={styles.modalContainer}>
-                <Text style={{ margin: 8 }}>
-                  이메일 또는 패스워드를 확인해주세요!
-                </Text>
-                <View style={{ width: "100%" }}>
-                  <Button
-                    title="확인"
-                    onPress={() => {
-                      setModal(false);
-                    }}
-                  />
-                </View>
-              </View>
-            </View>
-          </Modal>
+          <ErrorModal
+            visible={modal}
+            setHidden={setHidden}
+            text={"이메일 또는 패스워드를 확인해주세요!"}
+          />
           <View style={styles.imageContainer}>
             <Image
               style={styles.image}
@@ -176,21 +172,6 @@ const styles = StyleSheet.create({
   button: {
     width: "85%",
     height: 50,
-  },
-  modalBackground: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // 반투명 배경
-  },
-  modalContainer: {
-    justifyContent: "space-around",
-    height: "20%",
-    width: "70%", // 원하는 너비 설정
-    padding: 10,
-    backgroundColor: "white",
-    borderRadius: 10,
-    alignItems: "center",
   },
 });
 

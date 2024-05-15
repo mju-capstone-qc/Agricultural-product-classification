@@ -36,3 +36,15 @@ export type login = {
   platform: string;
   email: string;
 };
+
+export type resultType = {
+  result_id: number;
+  product_name: products;
+  grade_id: 0 | 1 | 2;
+  date: string;
+  image_path: string;
+};
+
+export type profile = {
+  name: string;
+};

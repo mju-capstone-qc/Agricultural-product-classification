@@ -12,6 +12,8 @@ import { kakao, login } from "./types/type";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import RegisterScreen from "./screens/RegisterScreen";
 import CustomDrawerContent from "./components/CustomDrawerContent";
+import HistoryScreen from "./screens/HistoryScreen";
+import ProfileScreen from "./screens/ProfileScreen";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -19,9 +21,10 @@ const Stack = createNativeStackNavigator();
 type Props = {
   curScreenHandler: (screen: string) => void;
   login: login;
+  setLogin: React.Dispatch<React.SetStateAction<login | null>>;
 };
 
-const StackNavigator = ({ curScreenHandler, login }: Props) => {
+const StackNavigator = ({ curScreenHandler, login, setLogin }: Props) => {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -56,6 +59,7 @@ const StackNavigator = ({ curScreenHandler, login }: Props) => {
               />
             </View>
           ),
+          headerTitleAlign: "center",
         }}
         listeners={() => ({
           state: (e) => {
@@ -64,6 +68,29 @@ const StackNavigator = ({ curScreenHandler, login }: Props) => {
           },
         })}
       />
+      <Stack.Screen
+        name="Profile"
+        options={{
+          headerTitle: () => (
+            <View style={styles.title}>
+              <Text style={styles.titleText}>내 정보</Text>
+              <Image
+                style={styles.logo}
+                source={require("./assets/images/logo_no_title.png")}
+              />
+            </View>
+          ),
+          headerTitleAlign: "center",
+        }}
+        listeners={() => ({
+          state: (e) => {
+            // 화면 변경 시 currentScreen 상태 업데이트
+            curScreenHandler(e.data.state.routes[e.data.state.index].name);
+          },
+        })}
+      >
+        {() => <ProfileScreen email={login.email} setLogin={setLogin} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 };
@@ -150,7 +177,7 @@ export default function App() {
             <CustomDrawerContent {...props} setLogin={setLogin} />
           )} // 커스텀 드로어 콘텐츠 사용
           screenOptions={{
-            headerShown: currentScreen !== "Result",
+            headerShown: currentScreen === "Home",
             headerTitleAlign: "center",
             drawerItemStyle: { backgroundColor: "white" },
             drawerActiveTintColor: "#27C077",
@@ -177,8 +204,26 @@ export default function App() {
               <StackNavigator
                 login={login}
                 curScreenHandler={curScreenHandler}
+                setLogin={setLogin}
               />
             )}
+          </Drawer.Screen>
+          <Drawer.Screen
+            name="History"
+            options={{
+              headerTitle: () => (
+                <View style={styles.title}>
+                  <Text style={styles.titleText}>진단 히스토리</Text>
+                  <Image
+                    style={styles.logo}
+                    source={require("./assets/images/logo_no_title.png")}
+                  />
+                </View>
+              ),
+              drawerLabel: "진단 히스토리",
+            }}
+          >
+            {() => <HistoryScreen email={login.email} />}
           </Drawer.Screen>
         </Drawer.Navigator>
       ) : (

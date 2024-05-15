@@ -55,6 +55,8 @@ const ProfileScreen = ({ email, setLogin }: Props) => {
   const handleModifyName = async () => {
     if (name) {
       editName(email, name);
+      setModal(true);
+      setText("이름이 변경되었습니다!");
     }
     if (!name) {
       setModal(true);
@@ -64,6 +66,8 @@ const ProfileScreen = ({ email, setLogin }: Props) => {
   const handleModifyPassword = async () => {
     if (name && password && password === confirmPassword) {
       editPassword(email, password);
+      setModal(true);
+      setText("비밀번호가 변경되었습니다!");
     }
     if (!password || password !== confirmPassword) {
       setModal(true);

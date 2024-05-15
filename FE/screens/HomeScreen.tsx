@@ -7,6 +7,7 @@ import InfoImage from "../components/InfoImage";
 import InfoText from "../components/InfoText";
 import Delete from "../components/Delete";
 import { login } from "../types/type";
+import { product_label } from "../utils/products";
 
 type Props = {
   login: login;
@@ -15,12 +16,7 @@ type Props = {
 const HomeScreen = ({ login }: Props) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
-  const [items, setItems] = useState([
-    { label: "양배추", value: "cabbage" },
-    { label: "부사사과", value: "fuji_apple" },
-    { label: "양왕사과", value: "yanggwang_apple" },
-    { label: "무", value: "radish" },
-  ]);
+  const [items, setItems] = useState(product_label);
   const [loading, setLoading] = useState(false);
 
   const loadingHandler = (bool: boolean) => {

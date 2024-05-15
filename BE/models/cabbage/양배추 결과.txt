@@ -1,0 +1,5 @@
+model_full.h5
+48/48 ━━━━━━━━━━━━━━━━━━━━ 1022s 22s/step - accuracy: 0.9019 - f1_m: 0.9019 - loss: 0.5499 - precision_m: 0.9020 - recall_m: 0.9018
+Model testing loss, accuracy, f1_score, precision, recall: 0.5257143974304199   0.9078249335289001   0.9052371978759766   0.9055359363555908   0.9049479365348816  
+50/50 ━━━━━━━━━━━━━━━━━━━━ 55s 1s/step - accuracy: 0.9329 - f1_m: 0.9329 - loss: 0.3346 - precision_m: 0.9329 - recall_m: 0.9329
+Model validation loss, accuracy, f1_score, precision, recall: 0.3256748914718628   0.9351145029067993   0.9362499713897705   0.9362499713897705   0.9362499713897705  

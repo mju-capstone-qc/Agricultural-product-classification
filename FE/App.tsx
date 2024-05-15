@@ -12,6 +12,7 @@ import { kakao, login } from "./types/type";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import RegisterScreen from "./screens/RegisterScreen";
 import CustomDrawerContent from "./components/CustomDrawerContent";
+import HistoryScreen from "./screens/HistoryScreen";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -179,6 +180,23 @@ export default function App() {
                 curScreenHandler={curScreenHandler}
               />
             )}
+          </Drawer.Screen>
+          <Drawer.Screen
+            name="History"
+            options={{
+              headerTitle: () => (
+                <View style={styles.title}>
+                  <Text style={styles.titleText}>진단 히스토리</Text>
+                  <Image
+                    style={styles.logo}
+                    source={require("./assets/images/logo_no_title.png")}
+                  />
+                </View>
+              ),
+              drawerLabel: "진단 히스토리",
+            }}
+          >
+            {() => <HistoryScreen email={login.email} />}
           </Drawer.Screen>
         </Drawer.Navigator>
       ) : (

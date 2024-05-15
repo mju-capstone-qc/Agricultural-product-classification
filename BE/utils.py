@@ -85,7 +85,9 @@ def process_and_save_image(email, file, bucket, model, product_id:int):
     values = (email,product_id,'https://storage.googleapis.com/exaple_naite/'+destination_blob_name)
     db_class.execute(sql, values)
     db_class.commit()
-    db_class.close()
+
+    sql = "SELECT MAX(photo_id) as photo_id FROM Photos;"
+    photo_id = db_class.executeOne(sql)
 
     x = image.img_to_array(resized_image)
     x = np.expand_dims(x, axis=0)
@@ -97,6 +99,11 @@ def process_and_save_image(email, file, bucket, model, product_id:int):
     max_value = max(class_probabilities)
     max_index = class_probabilities.index(max_value)
 
+    sql = "insert into Result (photo_id, user_email, product_id, grade_id, date) values (%s,%s,%s,%s,%s);"
+    values = (photo_id['photo_id'],email, product_id,max_index,'2024-06-10')
+    db_class.execute(sql, values)
+    db_class.commit()
+    db_class.close()
     return {"predicted_percent": class_probabilities, "predicted_class": max_index, "url": 'https://storage.googleapis.com/exaple_naite/'+destination_blob_name}
 
 
@@ -120,3 +127,34 @@ def getHistory(email):
     hist = db_class.executeAll(sql,(email))
     db_class.close()
     return hist
+
+def getProfile(email):
+    db_class = naite_db.Database()
+    sql = "SELECT user_name as name FROM Users WHERE user_email=%s"
+    name = db_class.executeOne(sql,(email))
+    db_class.close()
+    return name
+
+def editingName(email, name):
+    db_class = naite_db.Database()
+    sql = "UPDATE Users SET user_name=%s WHERE user_email=%s;"
+    db_class.execute(sql, (name, email))
+    db_class.commit()
+    db_class.close()
+    return name
+
+def editingPassword(email, password):
+    db_class = naite_db.Database()
+    sql = "UPDATE Users SET user_password=%s WHERE user_email=%s;"
+    db_class.execute(sql, (password, email))
+    db_class.commit()
+    db_class.close()
+    return password
+
+def delAccount(email):
+    db_class = naite_db.Database()
+    sql = "DELETE FROM Users WHERE user_email=%s;"
+    db_class.execute(sql, (email))
+    db_class.commit()
+    db_class.close()
+    return email

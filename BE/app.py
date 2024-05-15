@@ -1,7 +1,7 @@
 # app.py
 from flask import Flask, request, jsonify
 from model_utils import load_and_compile_model
-from utils import process_and_save_image, getInfo, localLogin, getHistory
+from utils import process_and_save_image, getInfo, localLogin, getHistory, getProfile, editingName, editingPassword, delAccount
 from google.cloud import storage
 from dotenv import load_dotenv
 import os
@@ -73,5 +73,35 @@ def history():
     if(email):
         hist = getHistory(email)
         return jsonify(hist)
+    
+@app.post("/profile")
+def profile():
+    email = request.json.get('email')
+    if(email):
+        profile = getProfile(email)
+        return profile
+    
+@app.post("/editName")
+def editName():
+    email = request.json.get('email')
+    name = request.json.get('name')
+    if(email and name):
+        edit = editingName(email, name)
+        return edit,200
+
+@app.post("/editPassword")
+def editPassword():
+    email = request.json.get('email')
+    password = request.json.get('password')
+    if(email and password):
+        edit = editingPassword(email, password)
+        return edit,200
+
+@app.post("/deleteAccount")
+def deleteAccount():
+    email = request.json.get('email')
+    if(email):
+        delAccount(email)
+        return {'success':'success'},200
 
 app.run(host='0.0.0.0', port=5000, debug=False)

@@ -7,6 +7,7 @@ import {
 } from "@react-navigation/drawer";
 import { login } from "../types/type";
 import { saveLogoutInfo } from "../utils/login";
+import { useNavigation } from "@react-navigation/native";
 
 type CustomDrawerContentProps = DrawerContentComponentProps & {
   setLogin: React.Dispatch<React.SetStateAction<login | null>>;
@@ -18,6 +19,7 @@ const CustomDrawerContent: React.FC<CustomDrawerContentProps> = (props) => {
     props.setLogin(null); // 예시로 로그인 상태를 초기화
     saveLogoutInfo();
   };
+  const navigator = useNavigation();
 
   return (
     <>
@@ -40,6 +42,7 @@ const CustomDrawerContent: React.FC<CustomDrawerContentProps> = (props) => {
         <TouchableOpacity
           onPress={() => {
             console.log("내정보");
+            navigator.navigate("Profile" as never);
           }}
           style={styles.logoutButton}
         >

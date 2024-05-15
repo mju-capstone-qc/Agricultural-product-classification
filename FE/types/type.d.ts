@@ -44,3 +44,7 @@ export type resultType = {
   date: string;
   image_path: string;
 };
+
+export type profile = {
+  name: string;
+};

@@ -2,15 +2,11 @@ import React, { useState } from "react";
 import { Image, ScrollView, StyleSheet, TextInput, Text, View, TouchableOpacity} from "react-native";
 import RegularButton from "../components/RegularButton";
 import axios from 'axios';
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ParamListBase } from "@react-navigation/routers";
 
 
 type Props = {
   // 회원가입 완료 후 로그인 상태를 업데이트하는 핸들러
   registerHandler: () => void;
-  navigation: NativeStackNavigationProp<ParamListBase, "Register">;
-
 };
 
 const RegisterScreen = () => {
@@ -18,23 +14,43 @@ const RegisterScreen = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [isEmailDuplicate, setIsEmailDuplicate] = useState(false); // 이메일 중복 여부 상태
+  const [passwordMatch, setPasswordMatch] = useState(true);
+  const [showEmailErrorMessage, setShowEmailErrorMessage] = useState(false);
+  const [isEmailChecked, setIsEmailChecked] = useState(false); // 이메일 중복 체크 자체를 했는지에 대한 상태
 
-  
+
   const handleRegister = async() => {
     // 필수 입력값 유효성 검사
     if (!name || !email || !password || !confirmPassword) {
       console.log('모든 필수 입력값을 입력하세요.');
       return;
     }
+    if (!isEmailChecked) {
+      console.log('이메일 중복 확인을 먼저 진행해주세요.');
+      setIsEmailChecked(false); // 이메일 중복 확인 했는지
+      return;
+    }
+    // 이메일 중복 여부 확인
+    if (isEmailDuplicate) {
+      console.log('이메일이 중복되었습니다.');
+      return;
+    } 
     // 비밀번호 일치 여부 확인
     if (password !== confirmPassword) {
       console.log('비밀번호가 일치하지 않습니다.');
+      setPasswordMatch(false);
       return;
+    } else {
+      setPasswordMatch(true);
     }
+    
+
+
     
     try {
       // 회원가입 API 호출
-      const response = await axios.post('http://localhost:3306/register', {
+      const response = await axios.post('http://192.168.11.144:3000/register', {
         name,
         email,
         password,
@@ -52,12 +68,28 @@ const RegisterScreen = () => {
       console.error('Error registering user:', error);
     }
   };
+  // 이메일 입력란 아래에 출력될 메시지
+  const emailErrorMessage = !isEmailChecked ? (
+  <Text style={styles.errorMessage}>이메일 중복 확인을 먼저 진행해주세요.</Text>
+  ) : null;
 
-  const handleCheckDuplicate = () => {
-    // 이메일 중복 확인 로직을 구현합니다.
-    // 필요에 따라 이메일 유효성 검사를 추가할 수 있습니다.
-    // 중복확인 버튼을 눌렀을 때 이메일 중복 여부를 확인하고,
-    // 결과에 따라 사용자에게 알림을 표시할 수 있습니다.
+  const handleCheckDuplicate = async () => {
+    try {
+      const response = await axios.post('http://192.168.11.144:3000/checkDuplicateEmail', {
+        email: email // 사용자가 입력한 이메일
+      });
+      if (response.data.isDuplicate) {
+        console.log('중복된 이메일입니다.');
+        setIsEmailChecked(true); // 이메일 중복 체크했는지 확인 상태 업데이트
+        setIsEmailDuplicate(response.data.isDuplicate); // 중복 여부 상태 업데이트
+      } else {
+        console.log('사용 가능한 이메일입니다.');
+        setIsEmailChecked(true); // 이메일 중복 체크했는지 확인 상태 업데이트
+        setIsEmailDuplicate(response.data.isDuplicate); // 중복 여부 상태 업데이트
+      }
+    } catch (error) {
+      console.error('이메일 중복 확인에 실패했습니다.', error);
+    }
   };
 
   return (
@@ -88,11 +120,14 @@ const RegisterScreen = () => {
               autoCapitalize="none"
               keyboardType="email-address"
             />
-            <TouchableOpacity onPress={handleCheckDuplicate} style={styles.checkButton}>
+            <TouchableOpacity onPress={handleCheckDuplicate} style={[styles.checkButton, !isEmailDuplicate ? styles.duplicateCheckButton : null]}>
               <Text style={styles.checkButtonText}>중복 확인</Text>
             </TouchableOpacity>
           </View>
-
+          {emailErrorMessage}
+          {isEmailDuplicate && (
+            <Text style={styles.errorMessage}>이메일이 중복되었습니다.</Text>
+          )}
           <TextInput
             style={styles.input}
             placeholder="비밀번호를 입력하세요."
@@ -109,6 +144,7 @@ const RegisterScreen = () => {
             secureTextEntry={true}
             autoCapitalize="none"
           />
+          {!passwordMatch && <Text style={styles.errorMessage}>비밀번호가 일치하지 않습니다.</Text>}
         </View>
         <View style={styles.registerButtonContainer}>
           <RegularButton
@@ -198,7 +234,7 @@ const styles = StyleSheet.create({
   },
   checkButton: {
     position: "absolute",
-    backgroundColor: "#ACB7C3",
+    backgroundColor: "#42AF4D",
     height: 30,
     paddingHorizontal: 16,
     justifyContent: "center",
@@ -207,10 +243,20 @@ const styles = StyleSheet.create({
     right: 10, // 우측에 정렬
     top: 20, // 상단에 정렬
   },
+  duplicateCheckButton: {
+    backgroundColor: "#ACB7C3", // 중복 확인 버튼 색상 변경
+  },
   checkButtonText: {
     color: "white",
     fontSize: 12,
   },
+  errorMessage: {
+    color: 'red',
+    fontSize: 12,
+    alignSelf: 'flex-start',
+    marginLeft: '10%',
+  },
+
 });
 
 export default RegisterScreen;

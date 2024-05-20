@@ -144,12 +144,11 @@ export default function App() {
     setLogin(logined);
   };
   const handleRegister = () => {
-    // 여기에 회원가입 로직을 구현합니다.
-    // 예: 회원가입 성공 후 로그인 상태를 업데이트합니다.
+    // 여기에 회원가입 로직을 구현
+    // 예: 회원가입 성공 후 로그인 상태를 업데이트
     loginHandler(true);
   };
-  const navigation = useNavigation();
-
+  
   return (
     <NavigationContainer>
       {login ? (

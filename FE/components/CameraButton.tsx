@@ -2,6 +2,7 @@ import { Alert, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import {
   PermissionStatus,
   launchCameraAsync,
+  launchImageLibraryAsync,
   useCameraPermissions,
 } from "expo-image-picker";
 import axios, { AxiosResponse } from "axios";
@@ -19,13 +20,11 @@ const CameraButton = ({ label, email, loadingHandler }: Props) => {
   console.log(URI);
   const [cameraPermissionInformation, requestPermission] =
     useCameraPermissions();
-
   const navigation = useNavigation();
 
   async function verifyPermissions() {
     if (cameraPermissionInformation?.status === PermissionStatus.UNDETERMINED) {
       const permissionResponse = await requestPermission();
-
       return permissionResponse.granted;
     }
 
@@ -56,29 +55,64 @@ const CameraButton = ({ label, email, loadingHandler }: Props) => {
       base64: true,
     });
 
-    if (!image.canceled) {
-      try {
-        const result = await axios
-          .post(`${URI}/image`, {
-            file: image.assets[0].base64,
-            label: label,
-            email: email,
-          })
-          .then((res: AxiosResponse<result>) => res.data);
-        console.log(result);
-        //@ts-ignore
-        await navigation.navigate("Result", {
-          result: result,
-          label: label,
-        });
-      } catch (error) {
-        console.error("error uploading image: ", error);
-      } finally {
-        loadingHandler(false);
-      }
+    if (!image.canceled && image.assets[0].base64) {
+      await uploadImage(image.assets[0].base64);
     } else {
       loadingHandler(false);
     }
+  }
+
+  async function pickImageHandler() {
+    const hasPermission = await verifyPermissions();
+
+    if (!hasPermission) {
+      return;
+    }
+
+    loadingHandler(true);
+
+    const image = await launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+      base64: true,
+    });
+
+    if (!image.canceled && image.assets[0].base64) {
+      await uploadImage(image.assets[0].base64);
+    } else {
+      loadingHandler(false);
+    }
+  }
+
+  async function uploadImage(base64: string) {
+    try {
+      const result = await axios
+        .post(`${URI}/image`, {
+          file: base64,
+          label: label,
+          email: email,
+        })
+        .then((res: AxiosResponse<result>) => res.data);
+      console.log(result);
+      //@ts-ignore
+      await navigation.navigate("Result", {
+        result: result,
+        label: label,
+      });
+    } catch (error) {
+      console.error("error uploading image: ", error);
+    } finally {
+      loadingHandler(false);
+    }
+  }
+
+  function showImagePickerOptions() {
+    Alert.alert("Select Image", "Choose an image source", [
+      { text: "Camera", onPress: takeImageHandler },
+      { text: "Gallery", onPress: pickImageHandler },
+      { text: "Cancel", style: "cancel" },
+    ]);
   }
 
   return (
@@ -87,7 +121,7 @@ const CameraButton = ({ label, email, loadingHandler }: Props) => {
         style={({ pressed }) =>
           pressed ? [styles.cameraImage, styles.pressed] : styles.cameraImage
         }
-        onPress={takeImageHandler}
+        onPress={showImagePickerOptions}
       >
         <Image
           style={{ width: 60, height: 60 }}

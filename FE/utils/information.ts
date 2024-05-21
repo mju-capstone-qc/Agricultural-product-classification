@@ -23,7 +23,7 @@ export const getTip = async (label: string) => {
         label: label,
       })
       .then((res: AxiosResponse<info>) => res.data);
-    console.log(info);
+    // console.log(info);
     return info.select_tip;
   } catch (error) {
     console.log("Error getting info: ", error);

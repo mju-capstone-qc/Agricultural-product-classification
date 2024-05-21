@@ -99,13 +99,21 @@ def process_and_save_image(email, file, bucket, model, product_id:int):
     max_value = max(class_probabilities)
     max_index = class_probabilities.index(max_value)
 
-    sql = "insert into Result (photo_id, user_email, product_id, grade_id, date) values (%s,%s,%s,%s,%s);"
-    values = (photo_id['photo_id'],email, product_id,max_index,'2024-06-10')
-    db_class.execute(sql, values)
-    db_class.commit()
     db_class.close()
     return {"predicted_percent": class_probabilities, "predicted_class": max_index, "url": 'https://storage.googleapis.com/exaple_naite/'+destination_blob_name}
 
+def saveResult(url, email, product_id, predicted_class, date='2024-06-10'):
+    db_class = naite_db.Database()
+
+    sql = "SELECT photo_id FROM Photos WHERE image_path=%s;"
+    photo_id = db_class.executeOne(sql,(url))['photo_id']
+
+    sql = "insert into Result (photo_id, user_email, product_id, grade_id, date) values (%s,%s,%s,%s,%s);"
+    values = (photo_id, email, product_id, predicted_class, date)
+    db_class.execute(sql, values)
+    db_class.commit()
+    db_class.close()
+    return {'suceess':True}
 
 def getInfo(product_id):
     db_class = naite_db.Database()

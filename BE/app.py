@@ -1,7 +1,7 @@
 # app.py
 from flask import Flask, request, jsonify
 from model_utils import load_and_compile_model
-from utils import process_and_save_image, getInfo, localLogin, getHistory, getProfile, editingName, editingPassword, delAccount
+from utils import process_and_save_image, getInfo, localLogin, getHistory, getProfile, editingName, editingPassword, delAccount, saveResult
 from google.cloud import storage
 from dotenv import load_dotenv
 import os
@@ -51,6 +51,17 @@ def imgPost():
         else:
             return jsonify({"error": "Invalid label"}), 400
         return jsonify(result)
+    
+@app.post("/save")
+def save():
+    url = request.json.get('url')
+    email = request.json.get('email')
+    product_id = request.json.get('product_id')
+    predicted_class = request.json.get('predicted_class')
+    # date = request.json.get('date')
+    if(url and email and product_id and predicted_class):
+        result = saveResult(url, email, product_id, predicted_class)
+        return result
     
 @app.post("/info")
 def info():

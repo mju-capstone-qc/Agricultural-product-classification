@@ -9,7 +9,6 @@ import {
   ScrollView,
   TouchableOpacity,
   Modal,
-  Dimensions,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
@@ -33,7 +32,6 @@ const CameraButton: React.FC<Props> = ({ label, email, loadingHandler }) => {
   const navigation = useNavigation();
   const [selectedImages, setSelectedImages] = useState<SelectedImage[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const screenHeight = Dimensions.get("window").height;
 
   async function verifyPermissions(): Promise<boolean> {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -117,29 +115,36 @@ const CameraButton: React.FC<Props> = ({ label, email, loadingHandler }) => {
   }
 
   async function uploadImages() {
-    loadingHandler(true);
-    try {
-      const results = await Promise.all(
-        selectedImages.map((image) =>
-          axios
-            .post(`${URI}/image`, {
-              file: image.base64,
-              label: label,
-              email: email,
-            })
-            .then((res: AxiosResponse<result>) => res.data)
-        )
-      );
-      console.log(results);
-      //@ts-ignore
-      await navigation.navigate("Result", {
-        result: results,
-        label: label,
-      });
-    } catch (error) {
-      console.error("Error uploading images: ", error);
-    } finally {
-      loadingHandler(false);
+    if (selectedImages.length > 0) {
+      loadingHandler(true);
+      setModalVisible(false);
+      try {
+        const results = await Promise.all(
+          selectedImages.map((image) =>
+            axios
+              .post(`${URI}/image`, {
+                file: image.base64,
+                label: label,
+                email: email,
+              })
+              .then((res: AxiosResponse<result>) => res.data)
+          )
+        );
+        console.log("결과", results);
+        //@ts-ignore
+        await navigation.navigate("Result", {
+          result: results,
+          label: label,
+          email: email,
+        });
+      } catch (error) {
+        console.error("Error uploading images: ", error);
+      } finally {
+        loadingHandler(false);
+        setSelectedImages([]);
+      }
+    } else {
+      Alert.alert("사진을 선택해주세요!");
     }
   }
 
@@ -179,7 +184,10 @@ const CameraButton: React.FC<Props> = ({ label, email, loadingHandler }) => {
         <View style={styles.modalContainer}>
           <View style={[styles.modalContent, { height: 250 }]}>
             <TouchableOpacity
-              onPress={() => setModalVisible(false)}
+              onPress={() => {
+                setModalVisible(false);
+                setSelectedImages([]);
+              }}
               style={styles.closeButton}
             >
               <Text style={styles.closeButtonText}>X</Text>

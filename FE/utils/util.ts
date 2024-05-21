@@ -22,3 +22,10 @@ export const formatDate = (dateString: string) => {
 
   return `${year}.${month}.${day} ${hours}:${minutes}`;
 };
+
+export const product_idx = {
+  cabbage: 1,
+  fuji_apple: 2,
+  yanggwang_apple: 3,
+  radish: 4,
+};

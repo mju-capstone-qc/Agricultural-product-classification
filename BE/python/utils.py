@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 from PIL import Image
 from rembg import remove
-import naite_db
+import BE.python.naite_db as naite_db
 
 # 현재 시간을 기준으로 고유한 파일 이름 생성
 def generate_unique_filename():

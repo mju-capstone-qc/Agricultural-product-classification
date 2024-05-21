@@ -124,6 +124,8 @@ const StackNavigatorRegister = ({ loginHandler }: RegisterProps) => {
   );
 };
 
+
+
 export default function App() {
   const [login, setLogin] = useState<login | null>(null);
   const [currentScreen, setCurrentScreen] = useState("NAITE");

@@ -120,7 +120,7 @@ const RegisterScreen = () => {
               autoCapitalize="none"
               keyboardType="email-address"
             />
-            <TouchableOpacity onPress={handleCheckDuplicate} style={[styles.checkButton, !isEmailDuplicate ? styles.duplicateCheckButton : null]}>
+            <TouchableOpacity onPress={handleCheckDuplicate} style={[styles.checkButton, isEmailChecked&&!isEmailDuplicate ? styles.duplicateCheckButton : null]}>
               <Text style={styles.checkButtonText}>중복 확인</Text>
             </TouchableOpacity>
           </View>

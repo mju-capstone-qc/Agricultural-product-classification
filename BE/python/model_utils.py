@@ -2,7 +2,7 @@
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.optimizers.schedules import ExponentialDecay
 from tensorflow.keras.models import load_model
-from utils import f1_m, precision_m, recall_m
+from BE.python.utils import f1_m, precision_m, recall_m
 
 def load_and_compile_model(model_path):
     # 모델 불러오기

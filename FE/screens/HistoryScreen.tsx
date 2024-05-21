@@ -112,6 +112,7 @@ const HistoryScreen = ({ email }: Props) => {
         data={filteredHistory}
         renderItem={(item) => <HistoryItem item={item.item} />}
         keyExtractor={(item) => item.result_id + ""}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );

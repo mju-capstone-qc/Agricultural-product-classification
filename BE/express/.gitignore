@@ -1,0 +1,4 @@
+.env
+node_modules/
+__pycache__
+cellular-client-420611-c576a2795cf2.json

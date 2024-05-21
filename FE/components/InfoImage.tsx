@@ -1,5 +1,6 @@
 import { Image, Text, View, StyleSheet } from "react-native";
 import { products } from "../types/type";
+import { product } from "../utils/products";
 
 type Props = {
   value: products;
@@ -13,13 +14,6 @@ const InfoImage = ({ value }: Props) => {
     radish: require("../assets/images/radish.png"),
   };
 
-  const names = {
-    cabbage: "양배추",
-    fuji_apple: "부사사과",
-    yanggwang_apple: "양왕사과",
-    radish: "무",
-  };
-
   return (
     <View style={{ alignItems: "center" }}>
       <Image
@@ -27,7 +21,7 @@ const InfoImage = ({ value }: Props) => {
         style={styles.informationImage}
         resizeMode="contain"
       />
-      <Text style={styles.informationLabel}>{names[value]}</Text>
+      <Text style={styles.informationLabel}>{product[value]}</Text>
     </View>
   );
 };

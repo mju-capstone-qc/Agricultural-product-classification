@@ -6,21 +6,24 @@ import CameraButton from "../components/CameraButton";
 import InfoImage from "../components/InfoImage";
 import InfoText from "../components/InfoText";
 import Delete from "../components/Delete";
+import { login } from "../types/type";
+import { product_label } from "../utils/products";
 
-const HomeScreen = () => {
+type Props = {
+  login: login;
+};
+
+const HomeScreen = ({ login }: Props) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
-  const [items, setItems] = useState([
-    { label: "양배추", value: "cabbage" },
-    { label: "부사사과", value: "fuji_apple" },
-    { label: "양왕사과", value: "yanggwang_apple" },
-    { label: "무", value: "radish" },
-  ]);
+  const [items, setItems] = useState(product_label);
   const [loading, setLoading] = useState(false);
 
   const loadingHandler = (bool: boolean) => {
     setLoading(bool);
   };
+
+  console.log("현재 로그인: ", login.email);
 
   return (
     <>
@@ -66,7 +69,11 @@ const HomeScreen = () => {
         {!value ? (
           <Background />
         ) : (
-          <CameraButton label={value} loadingHandler={loadingHandler} />
+          <CameraButton
+            email={login.email}
+            label={value}
+            loadingHandler={loadingHandler}
+          />
         )}
       </View>
       {loading && (
@@ -86,7 +93,6 @@ const styles = StyleSheet.create({
   },
   dropDown: {
     alignItems: "center",
-    zIndex: 10,
     marginLeft: "10%",
     marginRight: "10%",
     marginBottom: "5%",
@@ -103,6 +109,7 @@ const styles = StyleSheet.create({
   information: {
     alignItems: "center",
     flex: 1,
+    zIndex: -1,
   },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,

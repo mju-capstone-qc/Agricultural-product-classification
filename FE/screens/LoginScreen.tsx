@@ -1,23 +1,71 @@
 import { useRef, useState } from "react";
-import { Image, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import {
+  Button,
+  Image,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import RegularButton from "../components/RegularButton";
 import KakaoLogin from "../components/KakaoLogin";
+import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import { URI } from "@env";
+import { saveLoginInfo } from "../utils/login";
+import ErrorModal from "../components/ErrorModal";
 
 type props = {
-  loginHandler: (logined: boolean) => void;
+  loginHandler: (platform: string, email: string) => void;
 };
 
 const LoginScreen = ({ loginHandler }: props) => {
   const [kakao, setKakao] = useState(false);
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [modal, setModal] = useState(false);
 
-  const emailRef = useRef<TextInput>(null);
-  const passwordRef = useRef<TextInput>(null);
+  const navigation = useNavigation();
+
+  const localLoginHandler = async () => {
+    if (!email || !password) {
+      setModal(true);
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${URI}/login`, {
+        email: email,
+        password: password,
+      });
+      if (response.status === 200 && response.data.exist === 1) {
+        loginHandler("local", email);
+        saveLoginInfo({ platform: "local", email: email });
+      } else if (response.status === 200 && response.data.exist === 0) {
+        setModal(true);
+        return;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const setHidden = () => {
+    setModal(false);
+  };
   return (
     <>
       {kakao ? (
         <KakaoLogin loginHandler={loginHandler} />
       ) : (
         <ScrollView style={styles.container}>
+          <ErrorModal
+            visible={modal}
+            setHidden={setHidden}
+            text={"이메일 또는 패스워드를 확인해주세요!"}
+          />
           <View style={styles.imageContainer}>
             <Image
               style={styles.image}
@@ -29,7 +77,8 @@ const LoginScreen = ({ loginHandler }: props) => {
               <TextInput
                 style={styles.input}
                 placeholder="Email"
-                ref={emailRef}
+                value={email}
+                onChangeText={setEmail}
                 autoCapitalize="none"
                 keyboardType="email-address"
               />
@@ -37,12 +86,20 @@ const LoginScreen = ({ loginHandler }: props) => {
                 style={styles.input}
                 placeholder="password"
                 secureTextEntry={true}
-                ref={passwordRef}
+                value={password}
+                onChangeText={setPassword}
                 autoCapitalize="none"
               />
             </View>
             <View style={styles.loginButtonContainer}>
-              <RegularButton color="#42AF4D" onPress={() => {}}>
+              <RegularButton
+                color="#42AF4D"
+                onPress={() => {
+                  console.log("login!!");
+                  console.log(email);
+                  localLoginHandler();
+                }}
+              >
                 CONTINUE
               </RegularButton>
               <RegularButton
@@ -56,6 +113,7 @@ const LoginScreen = ({ loginHandler }: props) => {
               <RegularButton
                 color="#ACB7C3"
                 onPress={() => {
+                  navigation.navigate("Register" as never);
                   console.log("Sign up");
                 }}
               >

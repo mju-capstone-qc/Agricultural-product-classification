@@ -42,7 +42,7 @@ def f1_m(y_true, y_pred):
 
 
 
-def process_and_save_image(file, bucket, model, product_id:int):
+def process_and_save_image(email, file, bucket, model, product_id:int):
     db_class = naite_db.Database()
     # base64 이미지 데이터를 디코딩하여 이미지로 변환
     image_data = base64.b64decode(file)
@@ -82,10 +82,12 @@ def process_and_save_image(file, bucket, model, product_id:int):
         blob.upload_from_file(output, content_type='image/jpeg')
 
     sql = "INSERT INTO Photos(user_email, product_id, image_path) VALUES (%s, %s, %s)"
-    values = ('jjjk0605@naver.com',product_id,'https://storage.googleapis.com/exaple_naite/'+destination_blob_name)
+    values = (email,product_id,'https://storage.googleapis.com/exaple_naite/'+destination_blob_name)
     db_class.execute(sql, values)
     db_class.commit()
-    db_class.close()
+
+    sql = "SELECT MAX(photo_id) as photo_id FROM Photos;"
+    photo_id = db_class.executeOne(sql)
 
     x = image.img_to_array(resized_image)
     x = np.expand_dims(x, axis=0)
@@ -93,18 +95,74 @@ def process_and_save_image(file, bucket, model, product_id:int):
 
     output = model.predict(x)
     class_probabilities = tf.nn.softmax(output[0]).numpy().tolist()
-    print(class_probabilities)
 
     max_value = max(class_probabilities)
     max_index = class_probabilities.index(max_value)
 
+    db_class.close()
     return {"predicted_percent": class_probabilities, "predicted_class": max_index, "url": 'https://storage.googleapis.com/exaple_naite/'+destination_blob_name}
 
+def saveResult(url, email, product_id, predicted_class, date='2024-06-10'):
+    db_class = naite_db.Database()
+
+    sql = "SELECT photo_id FROM Photos WHERE image_path=%s;"
+    photo_id = db_class.executeOne(sql,(url))['photo_id']
+
+    sql = "insert into Result (photo_id, user_email, product_id, grade_id, date) values (%s,%s,%s,%s,%s);"
+    values = (photo_id, email, product_id, predicted_class, date)
+    db_class.execute(sql, values)
+    db_class.commit()
+    db_class.close()
+    return {'suceess':True}
 
 def getInfo(product_id):
     db_class = naite_db.Database()
-    sql = "SELECT * FROM Information JOIN Products ON Information.product_id=Products.product_id WHERE Products.product_name=%s;"
+    sql = "SELECT select_tip, efficacy, standard FROM Information JOIN Products ON Information.product_id=Products.product_id WHERE Products.product_name=%s;"
     info = db_class.executeOne(sql, (product_id))
     db_class.close()
     return info
 
+def localLogin(email, password):
+    db_class = naite_db.Database()
+    sql = "SELECT EXISTS (SELECT 1 FROM Users WHERE user_email=%s AND user_password=%s) as exist;"
+    exist = db_class.executeOne(sql, (email, password))
+    db_class.close()
+    return exist
+
+def getHistory(email):
+    db_class = naite_db.Database()
+    sql = "SELECT R.result_id, P.product_name, R.grade_id, R.date, PH.image_path FROM Result R JOIN Photos PH ON R.photo_id = PH.photo_id AND R.user_email = PH.user_email AND R.product_id = PH.product_id JOIN Products P ON R.product_id = P.product_id WHERE R.user_email = %s;"
+    hist = db_class.executeAll(sql,(email))
+    db_class.close()
+    return hist
+
+def getProfile(email):
+    db_class = naite_db.Database()
+    sql = "SELECT user_name as name FROM Users WHERE user_email=%s"
+    name = db_class.executeOne(sql,(email))
+    db_class.close()
+    return name
+
+def editingName(email, name):
+    db_class = naite_db.Database()
+    sql = "UPDATE Users SET user_name=%s WHERE user_email=%s;"
+    db_class.execute(sql, (name, email))
+    db_class.commit()
+    db_class.close()
+    return name
+
+def editingPassword(email, password):
+    db_class = naite_db.Database()
+    sql = "UPDATE Users SET user_password=%s WHERE user_email=%s;"
+    db_class.execute(sql, (password, email))
+    db_class.commit()
+    db_class.close()
+    return password
+
+def delAccount(email):
+    db_class = naite_db.Database()
+    sql = "DELETE FROM Users WHERE user_email=%s;"
+    db_class.execute(sql, (email))
+    db_class.commit()
+    db_class.close()
+    return email

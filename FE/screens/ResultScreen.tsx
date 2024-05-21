@@ -5,9 +5,11 @@ import ResultProduct from "../components/ResultProduct";
 import ResultTip from "../components/ResultTip";
 import { RouteProp } from "@react-navigation/native";
 import { products, result } from "../types/type";
+import { product_idx } from "../utils/util";
+import { saveResult } from "../utils/save";
 
 type RootStackParamList = {
-  Result: { result: result; label: products };
+  Result: { result: result[]; label: products; email: string };
 };
 
 type ResultScreenRouteProp = RouteProp<RootStackParamList, "Result">;
@@ -17,9 +19,22 @@ type Props = {
 };
 
 const ResultScreen = ({ route }: Props) => {
-  const { predicted_class, url } = route!.params.result;
+  let predicted_class = 0 as 0 | 1 | 2;
+  let url = "";
   const label = route!.params.label;
-  console.log(label);
+  const email = route!.params.email;
+
+  if (route && route.params.result) {
+    const result = route.params.result;
+    let predict = 0;
+    for (let i = 0; i < result.length; i += 1) {
+      if (predict < result[i].predicted_class)
+        predict = result[i].predicted_class;
+    }
+    url = result[0].url;
+    predicted_class = predict as 0 | 1 | 2;
+    saveResult(url, email, product_idx[label], predicted_class);
+  }
   return (
     <>
       <View style={styles.container}>

@@ -10,10 +10,10 @@ app.use(cors());
 
 // MySQL 연결 설정
 const connection = mysql.createConnection({
-  host: '34.47.78.182',
-  user: 'root', // MySQL 사용자 이름
-  password: '1234567asdf@', // MySQL 비밀번호
-  database: 'naite' // 사용할 데이터베이스 이름
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER, // MySQL 사용자 이름
+  password: process.env.DB_PASSWORD, // MySQL 비밀번호
+  database: process.env.DB_NAME // 사용할 데이터베이스 이름
 });
 
 // MySQL 연결

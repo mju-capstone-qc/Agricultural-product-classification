@@ -3,8 +3,6 @@ import { Image, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import RegularButton from "../components/RegularButton";
 import KakaoLogin from "../components/KakaoLogin";
 import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ParamListBase } from "@react-navigation/routers";
 
 type props = {
   loginHandler: (logined: boolean) => void;

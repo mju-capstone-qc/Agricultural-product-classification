@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Image, ScrollView, StyleSheet, TextInput, Text, View, TouchableOpacity} from "react-native";
 import RegularButton from "../components/RegularButton";
 import axios from 'axios';
@@ -16,9 +16,19 @@ const RegisterScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [isEmailDuplicate, setIsEmailDuplicate] = useState(false); // 이메일 중복 여부 상태
   const [passwordMatch, setPasswordMatch] = useState(true);
-  const [showEmailErrorMessage, setShowEmailErrorMessage] = useState(false);
+  //const [showEmailErrorMessage, setShowEmailErrorMessage] = useState(false);
   const [isEmailChecked, setIsEmailChecked] = useState(false); // 이메일 중복 체크 자체를 했는지에 대한 상태
+  const [allConditionsMet, setAllConditionsMet] = useState(false);
 
+  useEffect(() => {
+    // 모든 조건이 만족되는지 확인
+    if (name && email && password && confirmPassword && isEmailChecked && !isEmailDuplicate && password === confirmPassword) {
+      setAllConditionsMet(true);
+      setPasswordMatch(true)
+    } else {
+      setAllConditionsMet(false);
+    }
+  }, [name, email, password, confirmPassword, isEmailChecked, isEmailDuplicate]);
 
   const handleRegister = async() => {
     // 필수 입력값 유효성 검사
@@ -148,7 +158,7 @@ const RegisterScreen = () => {
         </View>
         <View style={styles.registerButtonContainer}>
           <RegularButton
-            color="#ACB7C3"
+            color={allConditionsMet ? "#42AF4D" : "#ACB7C3"}
             onPress={handleRegister}
           >
             SIGN UP

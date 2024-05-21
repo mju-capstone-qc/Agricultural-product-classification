@@ -2,12 +2,12 @@ import LoginScreen from "./screens/LoginScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import HomeScreen from "./screens/HomeScreen";
-import { Image, Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Image, Text, View, StyleSheet } from "react-native";
 import ResultScreen from "./screens/ResultScreen";
 import { useEffect, useState } from "react";
 import { getLoginInfo } from "./utils/login";
 import axios, { AxiosResponse } from "axios";
-import { KAKAO_CLIENT_SECRET, KAKAO_REST_API, URI } from "@env";
+import { KAKAO_CLIENT_SECRET, KAKAO_REST_API } from "@env";
 import { kakao, login } from "./types/type";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import RegisterScreen from "./screens/RegisterScreen";
@@ -39,7 +39,6 @@ const StackNavigator = ({ curScreenHandler, login, setLogin }: Props) => {
         }}
         listeners={() => ({
           state: (e) => {
-            // 화면 변경 시 currentScreen 상태 업데이트
             curScreenHandler(e.data.state.routes[e.data.state.index].name);
           },
         })}
@@ -63,7 +62,6 @@ const StackNavigator = ({ curScreenHandler, login, setLogin }: Props) => {
         }}
         listeners={() => ({
           state: (e) => {
-            // 화면 변경 시 currentScreen 상태 업데이트
             curScreenHandler(e.data.state.routes[e.data.state.index].name);
           },
         })}
@@ -84,7 +82,6 @@ const StackNavigator = ({ curScreenHandler, login, setLogin }: Props) => {
         }}
         listeners={() => ({
           state: (e) => {
-            // 화면 변경 시 currentScreen 상태 업데이트
             curScreenHandler(e.data.state.routes[e.data.state.index].name);
           },
         })}
@@ -127,11 +124,10 @@ const StackNavigatorRegister = ({ loginHandler }: RegisterProps) => {
   );
 };
 
-
-
 export default function App() {
   const [login, setLogin] = useState<login | null>(null);
   const [currentScreen, setCurrentScreen] = useState("NAITE");
+
   const curScreenHandler = (screen: string) => {
     setCurrentScreen(screen);
   };
@@ -153,7 +149,6 @@ export default function App() {
           );
           const newAccessToken = response.data;
           console.log(newAccessToken);
-          // if (newAccessToken) loginHandler("kakao");
         } catch (error) {
           console.error("Error refreshing token:", error);
         }
@@ -177,7 +172,7 @@ export default function App() {
         <Drawer.Navigator
           drawerContent={(props) => (
             <CustomDrawerContent {...props} setLogin={setLogin} />
-          )} // 커스텀 드로어 콘텐츠 사용
+          )}
           screenOptions={{
             headerShown: currentScreen === "Home",
             headerTitleAlign: "center",

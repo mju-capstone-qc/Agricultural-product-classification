@@ -1,11 +1,13 @@
 # app.py
 from flask import Flask, request, jsonify
 from model_utils import load_and_compile_model
-from utils import process_and_save_image, getInfo, localLogin, getHistory, getProfile, editingName, editingPassword, delAccount, saveResult
+from utils import img_check, process_and_save_image, getInfo, localLogin, getHistory, getProfile, editingName, editingPassword, delAccount, saveResult
 from google.cloud import storage
 from dotenv import load_dotenv
 import os
 import tensorflow as tf
+# oc 모델 로드 함수 임포트
+from oc_model_utils import load_models, load_ResNet50
 
 app = Flask(__name__)
 
@@ -35,6 +37,34 @@ radish_model_path = 'C:/capstone/BE/models/radish/model.h5'
 cabbage_model = load_and_compile_model(cabbage_model_path)
 fuji_apple_model = load_and_compile_model(fuji_apple_model_path)
 radish_model = load_and_compile_model(radish_model_path)
+
+# oc모델 경로 설정
+cabbage_oc_path = 'C:/capstone/BE/models/cabbage/oc_model/'
+fuji_apple_oc_path = 'C:/capstone/BE/models/cabbage/oc_model/'
+radish_oc_path = 'C:/capstone/BE/models/cabbage/oc_model/'
+
+# oc모델 불러오기
+cabbage_oc, cabbage_clf, cabbage_ss, cabbage_pca = load_models(cabbage_oc_path)
+fuji_apple_oc, fuji_apple_clf, fuji_apple_ss, fuji_apple_pca = load_models(fuji_apple_oc_path)
+radish_oc, radish_clf, radish_ss, radish_pca = load_models(radish_oc_path)
+
+# ResNet모델 불러오기
+resnet_model = load_ResNet50()
+
+@app.post("/check")
+def check():
+    file = request.json.get('file')
+    label = request.json.get('label')
+    if(file and label):
+        if label == 'cabbage':
+            result = img_check(file, cabbage_oc, cabbage_clf, cabbage_ss, cabbage_pca, resnet_model)
+        elif label == 'fuji_apple':
+            result = img_check(file, fuji_apple_oc, fuji_apple_clf, fuji_apple_ss, fuji_apple_pca, resnet_model)
+        elif label == 'radish':
+            result = img_check(file, radish_oc, radish_clf, radish_ss, radish_pca, resnet_model)
+        else:
+            return jsonify({"error": "Invalid label"}), 400
+        return jsonify(result)
 
 @app.post("/image")
 def imgPost():

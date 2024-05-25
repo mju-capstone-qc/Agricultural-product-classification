@@ -12,6 +12,8 @@ from PIL import Image
 from rembg import remove
 import naite_db as naite_db
 
+from oc_model_utils import load_image, extract_resnet, predict_with_loaded_models
+
 # 현재 시간을 기준으로 고유한 파일 이름 생성
 def generate_unique_filename():
     now = datetime.now()
@@ -40,10 +42,7 @@ def f1_m(y_true, y_pred):
     recall = recall_m(y_true, y_pred)
     return 2*((precision*recall)/(precision+recall+backend.epsilon()))
 
-
-
-def process_and_save_image(email, file, bucket, model, product_id:int):
-    db_class = naite_db.Database()
+def preprocess(file):
     # base64 이미지 데이터를 디코딩하여 이미지로 변환
     image_data = base64.b64decode(file)
     img = Image.open(BytesIO(image_data))
@@ -69,7 +68,21 @@ def process_and_save_image(email, file, bucket, model, product_id:int):
 
     # 이미지 크기 조정
     target_size = (299, 299)
-    resized_image = crop_img_pil.resize(target_size)
+    return crop_img_pil.resize(target_size)
+
+def img_check(file, oc, clf, ss, pca, resnet):
+    resized_image = preprocess(file)
+    X_test = load_image(resized_image)
+    resnet_features_X_test = extract_resnet(X_test, resnet)
+    oc_svm_preds_loaded, if_preds_loaded = predict_with_loaded_models(resnet_features_X_test, ss, pca, oc, clf)
+    print(oc_svm_preds_loaded.tolist()[0])
+    print(if_preds_loaded.tolist()[0])
+    return {'oc_svm': oc_svm_preds_loaded.tolist()[0], 'if_clf': if_preds_loaded.tolist()[0]}
+
+def process_and_save_image(email, file, bucket, model, product_id:int):
+    db_class = naite_db.Database()
+
+    resized_image = preprocess(file)
 
     # 업로드할 파일을 GCP에 저장할 때의 이름 생성
     destination_blob_name = generate_unique_filename()

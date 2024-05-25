@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { PYTHON_URI } from "@env";
+import { PYTHON_URI, NODE_URI } from "@env";
 import { profile } from "../types/type";
 
 export const getProfile = async (email: string) => {
@@ -29,9 +29,9 @@ export const editName = async (email: string, name: string) => {
 };
 
 export const editPassword = async (email: string, password: string) => {
-  console.log(PYTHON_URI);
+  console.log(NODE_URI);
   try {
-    await axios.post(`${PYTHON_URI}/editPassword`, {
+    await axios.post(`${NODE_URI}/editPassword`, {
       email: email,
       password: password,
     });

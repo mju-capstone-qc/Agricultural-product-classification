@@ -13,7 +13,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import axios, { AxiosResponse } from "axios";
-import { URI } from "@env";
+import { PYTHON_URI } from "@env";
 import { useNavigation } from "@react-navigation/native";
 import { result } from "../types/type";
 
@@ -122,7 +122,7 @@ const CameraButton: React.FC<Props> = ({ label, email, loadingHandler }) => {
         const results = await Promise.all(
           selectedImages.map((image) =>
             axios
-              .post(`${URI}/image`, {
+              .post(`${PYTHON_URI}/image`, {
                 file: image.base64,
                 label: label,
                 email: email,

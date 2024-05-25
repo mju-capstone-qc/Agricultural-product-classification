@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import WebView from "react-native-webview";
 import axios, { AxiosResponse } from "axios";
-import { KAKAO_REST_API, KAKAO_CLIENT_SECRET, URI } from "@env";
+import { KAKAO_REST_API, KAKAO_CLIENT_SECRET, PYTHON_URI } from "@env";
 import { kakao, kakaoLogin } from "../types/type";
 import { useEffect, useState } from "react";
 import { getLoginInfo, saveLoginInfo } from "../utils/login";
@@ -17,7 +17,7 @@ const KakaoLogin = ({ loginHandler }: props) => {
 
   function LogInProgress(data: string) {
     console.log(
-      `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_REST_API}&redirect_uri=${URI}/kakao`
+      `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_REST_API}&redirect_uri=${PYTHON_URI}/kakao`
     );
     const exp = "code=";
 
@@ -45,7 +45,7 @@ const KakaoLogin = ({ loginHandler }: props) => {
         params: {
           grant_type: "authorization_code",
           client_id: KAKAO_REST_API,
-          redirect_uri: `${URI}/kakao`,
+          redirect_uri: `${PYTHON_URI}/kakao`,
           code: request_code,
           client_secret: KAKAO_CLIENT_SECRET,
         },
@@ -56,7 +56,7 @@ const KakaoLogin = ({ loginHandler }: props) => {
           console.log("refresh", refresh);
           saveLoginInfo({ platform: "kakao", refresh: refresh });
           axios
-            .post(`${URI}/kakao/login`, {
+            .post(`${PYTHON_URI}/kakao/login`, {
               access_token: returnValue,
             })
             .then((res: AxiosResponse<kakaoLogin>) => {

@@ -36,10 +36,12 @@ const LoginScreen = ({ loginHandler }: props) => {
     }
 
     try {
+      console.log(`로그인 요청: ${email}, ${password}`);
       const response = await axios.post(`${URI}/login`, {
         email: email,
         password: password,
       });
+      console.log('로그인 응답:', response.data);
       if (response.status === 200 && response.data.exist === 1) {
         loginHandler("local", email);
         saveLoginInfo({ platform: "local", email: email });

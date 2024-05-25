@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Image, ScrollView, StyleSheet, TextInput, Text, View, TouchableOpacity} from "react-native";
+import { Image, ScrollView, StyleSheet, TextInput, Text, View, TouchableOpacity, Alert} from "react-native";
 import RegularButton from "../components/RegularButton";
 import axios from 'axios';
-
+import { URI } from "@env";
+import { useNavigation } from "@react-navigation/native";
 
 type Props = {
   // 회원가입 완료 후 로그인 상태를 업데이트하는 핸들러
@@ -19,6 +20,8 @@ const RegisterScreen = () => {
   //const [showEmailErrorMessage, setShowEmailErrorMessage] = useState(false);
   const [isEmailChecked, setIsEmailChecked] = useState(false); // 이메일 중복 체크 자체를 했는지에 대한 상태
   const [allConditionsMet, setAllConditionsMet] = useState(false);
+
+  const navigation = useNavigation(); // 네비게이션 객체 가져오기
 
   useEffect(() => {
     // 모든 조건이 만족되는지 확인
@@ -55,12 +58,9 @@ const RegisterScreen = () => {
       setPasswordMatch(true);
     }
     
-
-
-    
     try {
       // 회원가입 API 호출
-      const response = await axios.post('http://192.168.11.144:3000/register', {
+      const response = await axios.post(`${URI}/register`, {
         name,
         email,
         password,
@@ -69,8 +69,11 @@ const RegisterScreen = () => {
       // 서버로부터 받은 응답에 따라 처리
       if (response.status === 200) {
         console.log(response.data.message); // 회원가입 성공
-        // 회원가입 성공 후 로그인 화면으로 이동
-        //navigation.navigate("Login");
+        Alert.alert(
+          "회원가입 성공",
+          "회원가입이 성공적으로 완료되었습니다.",
+          [{ text: "확인", onPress: () => navigation.goBack() }] // 회원가입 성공 후 로그인 화면으로 이동
+        );
       } else {
         console.error(response.data.error); // 회원가입 실패
       }

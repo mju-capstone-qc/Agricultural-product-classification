@@ -13,7 +13,7 @@ import RegularButton from "../components/RegularButton";
 import KakaoLogin from "../components/KakaoLogin";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
-import { URI } from "@env";
+import { NODE_URI } from "@env";
 import { saveLoginInfo } from "../utils/login";
 import ErrorModal from "../components/ErrorModal";
 
@@ -37,11 +37,11 @@ const LoginScreen = ({ loginHandler }: props) => {
 
     try {
       console.log(`로그인 요청: ${email}, ${password}`);
-      const response = await axios.post(`${URI}/login`, {
+      const response = await axios.post(`${NODE_URI}/login`, {
         email: email,
         password: password,
       });
-      console.log('로그인 응답:', response.data);
+      console.log("로그인 응답:", response.data);
       if (response.status === 200 && response.data.exist === 1) {
         loginHandler("local", email);
         saveLoginInfo({ platform: "local", email: email });

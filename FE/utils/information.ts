@@ -1,12 +1,12 @@
 import axios, { AxiosResponse } from "axios";
-import { URI } from "@env";
+import { PYTHON_URI } from "@env";
 import { info } from "../types/type";
 
 export const getInfo = async (label: string) => {
-  console.log(URI);
+  console.log(PYTHON_URI);
   try {
     const info = await axios
-      .post(`${URI}/info`, {
+      .post(`${PYTHON_URI}/info`, {
         label: label,
       })
       .then((res: AxiosResponse<info>) => res.data);
@@ -19,7 +19,7 @@ export const getInfo = async (label: string) => {
 export const getTip = async (label: string) => {
   try {
     const info = await axios
-      .post(`${URI}/info`, {
+      .post(`${PYTHON_URI}/info`, {
         label: label,
       })
       .then((res: AxiosResponse<info>) => res.data);

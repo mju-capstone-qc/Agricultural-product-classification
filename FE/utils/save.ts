@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { URI } from "@env";
+import { PYTHON_URI } from "@env";
 
 export const saveResult = async (
   url: string,
@@ -7,10 +7,10 @@ export const saveResult = async (
   product_id: number,
   predicted_class: 0 | 1 | 2
 ) => {
-  console.log(URI);
+  console.log(PYTHON_URI);
   try {
     const save = await axios
-      .post(`${URI}/save`, {
+      .post(`${PYTHON_URI}/save`, {
         url: url,
         email: email,
         product_id: product_id,

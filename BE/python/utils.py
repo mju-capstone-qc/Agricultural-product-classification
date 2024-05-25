@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 from PIL import Image
 from rembg import remove
-import BE.python.naite_db as naite_db
+import naite_db as naite_db
 
 # 현재 시간을 기준으로 고유한 파일 이름 생성
 def generate_unique_filename():
@@ -85,9 +85,6 @@ def process_and_save_image(email, file, bucket, model, product_id:int):
     values = (email,product_id,'https://storage.googleapis.com/exaple_naite/'+destination_blob_name)
     db_class.execute(sql, values)
     db_class.commit()
-
-    sql = "SELECT MAX(photo_id) as photo_id FROM Photos;"
-    photo_id = db_class.executeOne(sql)
 
     x = image.img_to_array(resized_image)
     x = np.expand_dims(x, axis=0)

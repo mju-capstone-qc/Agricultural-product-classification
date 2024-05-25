@@ -48,3 +48,8 @@ export type resultType = {
 export type profile = {
   name: string;
 };
+
+export type oc = {
+  if_clf: 1 | -1;
+  oc_svm: 1 | -1;
+};

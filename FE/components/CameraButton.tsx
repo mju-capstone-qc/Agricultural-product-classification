@@ -9,13 +9,14 @@ import {
   ScrollView,
   TouchableOpacity,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import axios, { AxiosResponse } from "axios";
 import { PYTHON_URI } from "@env";
 import { useNavigation } from "@react-navigation/native";
-import { result } from "../types/type";
+import { oc, result } from "../types/type";
 
 interface Props {
   label: string;
@@ -32,6 +33,7 @@ const CameraButton: React.FC<Props> = ({ label, email, loadingHandler }) => {
   const navigation = useNavigation();
   const [selectedImages, setSelectedImages] = useState<SelectedImage[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   async function verifyPermissions(): Promise<boolean> {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -45,7 +47,7 @@ const CameraButton: React.FC<Props> = ({ label, email, loadingHandler }) => {
     return true;
   }
 
-  async function takeImagesWithCamera() {
+  async function takeImageWithCamera() {
     const hasPermission = await verifyPermissions();
     if (!hasPermission) {
       return;
@@ -62,23 +64,41 @@ const CameraButton: React.FC<Props> = ({ label, email, loadingHandler }) => {
       });
 
       if (!imageResult.canceled && imageResult.assets) {
-        setSelectedImages((prevImages) => [
-          ...prevImages,
-          ...imageResult.assets.map((asset) => ({
-            uri: asset.uri,
-            base64: asset.base64 || "",
-          })),
-        ]);
+        const imageData = {
+          file: imageResult.assets[0].base64 || "",
+          label: label,
+          email: email,
+        };
+
+        // Send image data to server to check
+        const response = await axios.post(`${PYTHON_URI}/check`, imageData);
+        console.log(response.data);
+        if (response.data === 1) {
+          // If server response is 1, add image to selectedImages
+          setSelectedImages((prevImages) => [
+            ...prevImages,
+            {
+              uri: imageResult.assets[0].uri,
+              base64: imageData.file,
+            },
+          ]);
+          setModalVisible(true);
+        } else {
+          // Server response is not 1, handle accordingly
+          Alert.alert(
+            "농산물 인식에 실패하였습니다",
+            "사진을 농산물이 전부 보이게 다시 찍어주세요"
+          );
+        }
       }
-      setModalVisible(true);
     } catch (error) {
-      console.log("Error taking images: ", error);
+      console.log("Error taking image: ", error);
     } finally {
       loadingHandler(false);
     }
   }
 
-  async function selectImagesFromGallery() {
+  async function selectImageFromGallery() {
     const { status } = await MediaLibrary.requestPermissionsAsync();
     if (status !== "granted") {
       Alert.alert(
@@ -92,23 +112,43 @@ const CameraButton: React.FC<Props> = ({ label, email, loadingHandler }) => {
 
     try {
       const imageResult = await ImagePicker.launchImageLibraryAsync({
-        allowsMultipleSelection: true,
+        allowsMultipleSelection: false,
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         base64: true,
       });
 
       if (!imageResult.canceled && imageResult.assets) {
-        setSelectedImages((prevImages) => [
-          ...prevImages,
-          ...imageResult.assets.map((asset) => ({
-            uri: asset.uri,
-            base64: asset.base64 || "",
-          })),
-        ]);
+        const imageData = {
+          file: imageResult.assets[0].base64 || "",
+          label: label,
+          email: email,
+        };
+
+        // Send image data to server to check
+        const response = await axios
+          .post(`${PYTHON_URI}/check`, imageData)
+          .then((res: AxiosResponse<oc>) => res.data);
+        console.log(response);
+        if (response["if_clf"] === 1 || response["oc_svm"] === 1) {
+          // If server response is 1, add image to selectedImages
+          setSelectedImages((prevImages) => [
+            ...prevImages,
+            {
+              uri: imageResult.assets[0].uri,
+              base64: imageData.file,
+            },
+          ]);
+          setModalVisible(true);
+        } else {
+          // Server response is not 1, handle accordingly
+          Alert.alert(
+            "농산물 인식에 실패하였습니다",
+            "농산물 전체가 보이는 사진을 선택해주세요"
+          );
+        }
       }
-      setModalVisible(true);
     } catch (error) {
-      console.log("Error selecting images: ", error);
+      console.log("Error selecting image: ", error);
     } finally {
       loadingHandler(false);
     }
@@ -150,10 +190,26 @@ const CameraButton: React.FC<Props> = ({ label, email, loadingHandler }) => {
 
   function showImagePickerOptions() {
     Alert.alert("Select Image", "Choose an image source", [
-      { text: "Camera", onPress: takeImagesWithCamera },
-      { text: "Gallery", onPress: selectImagesFromGallery },
+      { text: "Camera", onPress: handleTakeImage },
+      { text: "Gallery", onPress: handleSelectImage },
       { text: "Cancel", style: "cancel" },
     ]);
+  }
+
+  async function handleTakeImage() {
+    loadingHandler(true);
+    setLoading(true);
+    await takeImageWithCamera();
+    loadingHandler(false);
+    setLoading(false);
+  }
+
+  async function handleSelectImage() {
+    loadingHandler(true);
+    setLoading(true);
+    await selectImageFromGallery();
+    loadingHandler(false);
+    setLoading(false);
   }
 
   function removeImage(uri: string) {
@@ -225,6 +281,11 @@ const CameraButton: React.FC<Props> = ({ label, email, loadingHandler }) => {
             </View>
           </View>
         </View>
+        {loading && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color="#42AF4D" />
+          </View>
+        )}
       </Modal>
     </View>
   );
@@ -315,6 +376,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 10,
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.3)", // Adjust transparency
+    zIndex: 9999, // Ensure it's on top
   },
 });
 

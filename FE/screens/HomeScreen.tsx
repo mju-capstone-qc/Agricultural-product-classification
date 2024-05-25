@@ -5,7 +5,6 @@ import Background from "../components/Background";
 import CameraButton from "../components/CameraButton";
 import InfoImage from "../components/InfoImage";
 import InfoText from "../components/InfoText";
-import Delete from "../components/Delete";
 import { login } from "../types/type";
 import { product_label } from "../utils/products";
 
@@ -28,13 +27,8 @@ const HomeScreen = ({ login }: Props) => {
   return (
     <>
       <View style={styles.container}>
-        <View
-          style={{
-            flex: 7,
-          }}
-        >
+        <View style={{ flex: 7 }}>
           <View style={styles.dropDown}>
-            {/* <Delete></Delete> */}
             <View style={{ top: "20%" }}>
               <Text style={styles.text}>농산물 선택하기</Text>
               <DropDownPicker
@@ -62,9 +56,7 @@ const HomeScreen = ({ login }: Props) => {
               <InfoImage value={value} />
               <InfoText value={value} />
             </View>
-          ) : (
-            <></>
-          )}
+          ) : null}
         </View>
         {!value ? (
           <Background />
@@ -115,8 +107,8 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.5)", // 투명도 조절
-    zIndex: 9999, // z-index 설정
+    backgroundColor: "rgba(255, 255, 255, 0.5)", // Adjust transparency
+    zIndex: 9999, // Ensure it's on top
   },
 });
 

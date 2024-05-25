@@ -86,9 +86,6 @@ def process_and_save_image(email, file, bucket, model, product_id:int):
     db_class.execute(sql, values)
     db_class.commit()
 
-    sql = "SELECT MAX(photo_id) as photo_id FROM Photos;"
-    photo_id = db_class.executeOne(sql)
-
     x = image.img_to_array(resized_image)
     x = np.expand_dims(x, axis=0)
     x /= 255.

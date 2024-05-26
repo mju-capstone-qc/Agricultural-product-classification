@@ -71,9 +71,11 @@ const CameraButton: React.FC<Props> = ({ label, email, loadingHandler }) => {
         };
 
         // Send image data to server to check
-        const response = await axios.post(`${PYTHON_URI}/check`, imageData);
-        console.log(response.data);
-        if (response.data === 1) {
+        const response = await axios
+          .post(`${PYTHON_URI}/check`, imageData)
+          .then((res: AxiosResponse<oc>) => res.data);
+        console.log(response);
+        if (response["if_clf"] === 1 || response["oc_svm"] === 1) {
           // If server response is 1, add image to selectedImages
           setSelectedImages((prevImages) => [
             ...prevImages,

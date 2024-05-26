@@ -12,6 +12,8 @@ const InfoImage = ({ value }: Props) => {
     fuji_apple: require("../assets/images/apple.png"),
     yanggwang_apple: require("../assets/images/apple.png"),
     radish: require("../assets/images/radish.png"),
+    chinese_cabbage: require("../assets/images/chinese_cabbage.png"),
+    singo_pear: require("../assets/images/pear.png"),
   };
 
   return (

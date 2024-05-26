@@ -28,4 +28,6 @@ export const product_idx = {
   fuji_apple: 2,
   yanggwang_apple: 3,
   radish: 4,
+  chinese_cabbage: 5,
+  singo_pear: 6,
 };

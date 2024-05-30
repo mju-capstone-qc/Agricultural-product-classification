@@ -12,7 +12,7 @@ from PIL import Image
 from rembg import remove
 import naite_db as naite_db
 
-from oc_model_utils import load_image, extract_resnet, predict_with_loaded_models
+from oc_model_utils import extract_features, predict_is
 
 # 현재 시간을 기준으로 고유한 파일 이름 생성
 def generate_unique_filename():
@@ -49,6 +49,7 @@ def preprocess(file):
 
     # 이미지 처리
     out = remove(img)
+    
     white_bg = Image.new("RGBA", img.size, "WHITE")
     white_bg.paste(img, (0, 0), out)
     white_bg = white_bg.convert("RGB")
@@ -70,14 +71,12 @@ def preprocess(file):
     target_size = (299, 299)
     return crop_img_pil.resize(target_size)
 
-def img_check(file, oc, clf, ss, pca, resnet):
+def img_check(file, clf, inception_model):
     resized_image = preprocess(file)
-    X_test = load_image(resized_image)
-    resnet_features_X_test = extract_resnet(X_test, resnet)
-    oc_svm_preds_loaded, if_preds_loaded = predict_with_loaded_models(resnet_features_X_test, ss, pca, oc, clf)
-    print(oc_svm_preds_loaded.tolist()[0])
+    resnet_features_X_test = extract_features(resized_image, inception_model)
+    if_preds_loaded = predict_is(clf, resnet_features_X_test)
     print(if_preds_loaded.tolist()[0])
-    return {'oc_svm': oc_svm_preds_loaded.tolist()[0], 'if_clf': if_preds_loaded.tolist()[0]}
+    return {'if_clf': if_preds_loaded.tolist()[0]}
 
 def process_and_save_image(email, file, bucket, model, product_id:int):
     db_class = naite_db.Database()
@@ -112,9 +111,9 @@ def process_and_save_image(email, file, bucket, model, product_id:int):
     db_class.close()
     return {"predicted_percent": class_probabilities, "predicted_class": max_index, "url": 'https://storage.googleapis.com/exaple_naite/'+destination_blob_name}
 
-def saveResult(url, email, product_id, predicted_class, date='2024-06-10'):
+def saveResult(url, email, product_id, predicted_class, date='2024-06-10 03:02'):
     db_class = naite_db.Database()
-
+    
     sql = "SELECT photo_id FROM Photos WHERE image_path=%s;"
     photo_id = db_class.executeOne(sql,(url))['photo_id']
 

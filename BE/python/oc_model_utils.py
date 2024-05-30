@@ -1,36 +1,31 @@
 import numpy as np
-from keras.preprocessing.image import load_img, img_to_array
-from keras.applications.resnet50 import preprocess_input
 import joblib
 from keras.applications.resnet50 import ResNet50
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.applications import InceptionV3
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import GlobalAveragePooling2D
 
 def load_models(model_path):
-    loaded_oc_svm_clf = joblib.load(model_path+'oc_svm_model.pkl')
-    loaded_if_clf = joblib.load(model_path+'if_model.pkl')
-    loaded_ss = joblib.load(model_path+'scaler.pkl')
-    loaded_pca = joblib.load(model_path+'pca.pkl')
+    loaded_if_clf = joblib.load(model_path+'if_clf_model.pkl')
     print("모델이 성공적으로 불러와졌습니다.")
-    return loaded_oc_svm_clf, loaded_if_clf, loaded_ss, loaded_pca
+    return loaded_if_clf
 
-def load_ResNet50():
-  return ResNet50(input_shape=(299, 299, 3), weights='imagenet', include_top=False)
-
-def preprocess_features(features):
-    return features.reshape(-1, np.prod(features.shape[1:]))
-
-def extract_resnet(X, resnet_model):
-    features_array = resnet_model.predict(X)
-    return features_array
-
-def load_image(img):
-    img_array = img_to_array(img)
+def extract_features(img, model):
+    img_array = image.img_to_array(img) / 255.0
     img_array = np.expand_dims(img_array, axis=0)
-    img_array = preprocess_input(img_array)
-    return img_array
+    features = model.predict(img_array)
+    return features
 
-def predict_with_loaded_models(features, ss, pca, oc_svm_clf, if_clf):
-    features_scaled = ss.transform(preprocess_features(features))
-    features_pca = pca.transform(features_scaled)
-    oc_svm_preds = oc_svm_clf.predict(features_pca)
-    if_preds = if_clf.predict(features_pca)
-    return oc_svm_preds, if_preds
+def load_inception():
+    IMG_SIZE = 299
+    # InceptionV3 모델 로드 (ImageNet 가중치 사용, 최상위 레이어 제외)
+    base_model = InceptionV3(weights='imagenet', include_top=False, input_shape=(IMG_SIZE, IMG_SIZE, 3))
+
+    # 특징 추출 모델 구성
+    models = Model(inputs=base_model.input, outputs=GlobalAveragePooling2D()(base_model.output))
+    return models
+
+def predict_is(if_clf, features):
+    prediction = if_clf.predict(features)
+    return prediction

@@ -75,7 +75,13 @@ const HistoryScreen = ({ email }: Props) => {
       const fetchHistory = async () => {
         try {
           const fetchedHistory = await getHistory(email);
-          setHistory(fetchedHistory);
+          if (fetchedHistory)
+            setHistory(
+              fetchedHistory.sort(
+                (a, b) =>
+                  new Date(b.date).getTime() - new Date(a.date).getTime()
+              )
+            );
           setFilteredHistory(fetchedHistory); // 초기값 설정
         } catch (error) {
           console.log(error);

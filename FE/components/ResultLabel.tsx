@@ -1,13 +1,14 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { products } from "../types/type";
-import { getKoreanDateTime } from "../utils/util";
+import { getKoreanDate, getKoreanDateTime } from "../utils/util";
 import { product } from "../utils/products";
 
 type Props = {
   label: products;
 };
 const ResultLabel = ({ label }: Props) => {
-  const date = getKoreanDateTime().toString();
+  // const date = getKoreanDateTime().toString();
+  const date = getKoreanDate().toString();
 
   return (
     <View
@@ -26,7 +27,7 @@ const ResultLabel = ({ label }: Props) => {
           <Text style={styles.text}>농산물 진단</Text>
           <Text style={styles.date}>{date}</Text>
         </View>
-        <Pressable
+        {/* <Pressable
           style={({ pressed }) =>
             pressed
               ? [styles.buttonOuterContainer, styles.pressed]
@@ -39,7 +40,7 @@ const ResultLabel = ({ label }: Props) => {
               진단 기록 보기
             </Text>
           </View>
-        </Pressable>
+        </Pressable> */}
       </View>
       <View
         style={{

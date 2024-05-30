@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import Background from "../components/Background";
 import CameraButton from "../components/CameraButton";
@@ -7,6 +13,7 @@ import InfoImage from "../components/InfoImage";
 import InfoText from "../components/InfoText";
 import { login } from "../types/type";
 import { product_label } from "../utils/products";
+import GuideModal from "../components/GuideModal";
 
 type Props = {
   login: login;
@@ -17,6 +24,7 @@ const HomeScreen = ({ login }: Props) => {
   const [value, setValue] = useState(null);
   const [items, setItems] = useState(product_label);
   const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   const loadingHandler = (bool: boolean) => {
     setLoading(bool);
@@ -30,7 +38,38 @@ const HomeScreen = ({ login }: Props) => {
         <View style={{ flex: 7 }}>
           <View style={styles.dropDown}>
             <View style={{ top: "20%" }}>
-              <Text style={styles.text}>농산물 선택하기</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: 5,
+                }}
+              >
+                <Text style={styles.text}>농산물 선택하기</Text>
+                <Pressable
+                  style={({ pressed }) =>
+                    pressed
+                      ? [styles.buttonOuterContainer, styles.pressed]
+                      : styles.buttonOuterContainer
+                  }
+                  onPress={() => {
+                    setVisible(true);
+                  }}
+                >
+                  <View>
+                    <Text style={{ color: "#42AF4D", fontWeight: "bold" }}>
+                      촬영 Tip!
+                    </Text>
+                  </View>
+                </Pressable>
+                <GuideModal
+                  visible={visible}
+                  setHidden={() => {
+                    setVisible(false);
+                  }}
+                />
+              </View>
               <DropDownPicker
                 searchable={true}
                 searchPlaceholder="Search..."
@@ -92,7 +131,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     fontWeight: "600",
-    marginBottom: 10,
   },
   search: {
     borderWidth: 0,
@@ -109,6 +147,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(255, 255, 255, 0.5)", // Adjust transparency
     zIndex: 9999, // Ensure it's on top
+  },
+  buttonOuterContainer: {
+    borderRadius: 10,
+    width: 80,
+    height: 30,
+    overflow: "hidden",
+    padding: 5,
+    backgroundColor: "#E8F9E5",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  pressed: {
+    opacity: 0.75,
   },
 });
 

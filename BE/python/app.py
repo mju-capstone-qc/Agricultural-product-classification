@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import os
 import tensorflow as tf
 # oc 모델 로드 함수 임포트
-from oc_model_utils import load_models, load_ResNet50
+from oc_model_utils import load_models, load_inception
 
 app = Flask(__name__)
 
@@ -30,26 +30,26 @@ for gpu in gpus:
 
 # 모델 경로 설정
 cabbage_model_path = 'C:/capstone/BE/models/cabbage/model.h5'
-fuji_apple_model_path = 'C:/capstone/BE/models/fuji_apple/model.h5'
+apple_model = 'C:/capstone/BE/models/apple/model.h5'
 radish_model_path = 'C:/capstone/BE/models/radish/model.h5'
 
 # 모델 불러오기 및 컴파일
 cabbage_model = load_and_compile_model(cabbage_model_path)
-fuji_apple_model = load_and_compile_model(fuji_apple_model_path)
+apple_model = load_and_compile_model(apple_model)
 radish_model = load_and_compile_model(radish_model_path)
 
 # oc모델 경로 설정
 cabbage_oc_path = 'C:/capstone/BE/models/cabbage/oc_model/'
-fuji_apple_oc_path = 'C:/capstone/BE/models/cabbage/oc_model/'
-radish_oc_path = 'C:/capstone/BE/models/cabbage/oc_model/'
+apple_oc_model = 'C:/capstone/BE/models/apple/oc_model/'
+radish_oc_path = 'C:/capstone/BE/models/radish/oc_model/'
 
 # oc모델 불러오기
-cabbage_oc, cabbage_clf, cabbage_ss, cabbage_pca = load_models(cabbage_oc_path)
-fuji_apple_oc, fuji_apple_clf, fuji_apple_ss, fuji_apple_pca = load_models(fuji_apple_oc_path)
-radish_oc, radish_clf, radish_ss, radish_pca = load_models(radish_oc_path)
+cabbage_clf = load_models(cabbage_oc_path)
+apple_clf = load_models(apple_oc_model)
+radish_clf = load_models(radish_oc_path)
 
 # ResNet모델 불러오기
-resnet_model = load_ResNet50()
+inception_model = load_inception()
 
 @app.post("/check")
 def check():
@@ -57,11 +57,11 @@ def check():
     label = request.json.get('label')
     if(file and label):
         if label == 'cabbage':
-            result = img_check(file, cabbage_oc, cabbage_clf, cabbage_ss, cabbage_pca, resnet_model)
-        elif label == 'fuji_apple':
-            result = img_check(file, fuji_apple_oc, fuji_apple_clf, fuji_apple_ss, fuji_apple_pca, resnet_model)
+            result = img_check(file, cabbage_clf, inception_model)
+        elif label == 'apple':
+            result = img_check(file, apple_clf, inception_model)
         elif label == 'radish':
-            result = img_check(file, radish_oc, radish_clf, radish_ss, radish_pca, resnet_model)
+            result = img_check(file, radish_clf, inception_model)
         else:
             return jsonify({"error": "Invalid label"}), 400
         return jsonify(result)
@@ -74,10 +74,10 @@ def imgPost():
     if (file and label and email):
         if label == 'cabbage':
             result = process_and_save_image(email, file, bucket, cabbage_model, 1)
-        elif label == 'fuji_apple':
-            result = process_and_save_image(email, file, bucket, fuji_apple_model, 2)
+        elif label == 'apple':
+            result = process_and_save_image(email, file, bucket, apple_model, 2)
         elif label == 'radish':
-            result = process_and_save_image(email, file, bucket, radish_model, 4)
+            result = process_and_save_image(email, file, bucket, radish_model, 3)
         else:
             return jsonify({"error": "Invalid label"}), 400
         return jsonify(result)
@@ -88,10 +88,11 @@ def save():
     email = request.json.get('email')
     product_id = request.json.get('product_id')
     predicted_class = request.json.get('predicted_class')
-    # date = request.json.get('date')
-    if(url and email and product_id and predicted_class):
-        result = saveResult(url, email, product_id, predicted_class)
-        return result
+    date = request.json.get('date')
+    print(date)
+    if(url and email and product_id and predicted_class>=0 and date):
+        result = saveResult(url, email, product_id, predicted_class, date)
+        return jsonify({'status': 'success', 'message': 'Data saved successfully'})
     
 @app.post("/info")
 def info():

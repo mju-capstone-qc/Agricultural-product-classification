@@ -1,5 +1,0 @@
-model.h5
-52/52 ━━━━━━━━━━━━━━━━━━━━ 80s 1s/step - accuracy: 0.9032 - f1_m: 0.9020 - loss: 0.5134 - precision_m: 0.9037 - recall_m: 0.9003
-Model testing loss, accuracy, f1_score, precision, recall: 0.4864650368690491   0.9055690169334412   0.9057368040084839   0.9068199396133423   0.9046875238418579  
-58/58 ━━━━━━━━━━━━━━━━━━━━ 72s 1s/step - accuracy: 0.9457 - f1_m: 0.9457 - loss: 0.3270 - precision_m: 0.9457 - recall_m: 0.9457
-Model validation loss, accuracy, f1_score, precision, recall: 0.38700756430625916   0.9306011199951172   0.929238498210907   0.929238498210907   0.929238498210907 

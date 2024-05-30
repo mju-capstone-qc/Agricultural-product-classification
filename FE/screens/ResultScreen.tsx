@@ -5,8 +5,10 @@ import ResultProduct from "../components/ResultProduct";
 import ResultTip from "../components/ResultTip";
 import { RouteProp } from "@react-navigation/native";
 import { products, result } from "../types/type";
-import { product_idx } from "../utils/util";
+import { getKoreanDate, product_idx } from "../utils/util";
 import { saveResult } from "../utils/save";
+import StandardModal from "../components/StandardModal";
+import { useState } from "react";
 
 type RootStackParamList = {
   Result: { result: result[]; label: products; email: string };
@@ -19,6 +21,12 @@ type Props = {
 };
 
 const ResultScreen = ({ route }: Props) => {
+  const [visible, setVisible] = useState(false);
+
+  const setHidden = () => {
+    setVisible(false);
+  };
+
   let predicted_class = 0 as 0 | 1 | 2;
   let url = "";
   const label = route!.params.label;
@@ -31,9 +39,12 @@ const ResultScreen = ({ route }: Props) => {
       if (predict < result[i].predicted_class)
         predict = result[i].predicted_class;
     }
+    console.log(result);
     url = result[0].url;
     predicted_class = predict as 0 | 1 | 2;
-    saveResult(url, email, product_idx[label], predicted_class);
+    const date = getKoreanDate();
+    console.log(date);
+    saveResult(url, email, product_idx[label], predicted_class, date);
   }
   return (
     <>
@@ -50,13 +61,19 @@ const ResultScreen = ({ route }: Props) => {
             <View style={{ flex: 3 }}>
               <ResultTip label={label} />
               <View style={styles.button}>
-                <RegularButton onPress={() => {}} color="#42AF4D">
+                <RegularButton
+                  onPress={() => {
+                    setVisible(true);
+                  }}
+                  color="#42AF4D"
+                >
                   등급선별기준 확인하기
                 </RegularButton>
               </View>
             </View>
           </View>
         </View>
+        <StandardModal visible={visible} setHidden={setHidden} label={label} />
       </View>
     </>
   );

@@ -9,11 +9,9 @@ type Props = {
 const InfoImage = ({ value }: Props) => {
   const images = {
     cabbage: require("../assets/images/cabbage.png"),
-    fuji_apple: require("../assets/images/apple.png"),
-    yanggwang_apple: require("../assets/images/apple.png"),
+    apple: require("../assets/images/apple.png"),
     radish: require("../assets/images/radish.png"),
     chinese_cabbage: require("../assets/images/chinese_cabbage.png"),
-    singo_pear: require("../assets/images/pear.png"),
   };
 
   return (

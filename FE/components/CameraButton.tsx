@@ -58,7 +58,6 @@ const CameraButton: React.FC<Props> = ({ label, email, loadingHandler }) => {
     try {
       const imageResult = await ImagePicker.launchCameraAsync({
         allowsEditing: true,
-        aspect: [1, 1],
         quality: 1,
         base64: true,
       });
@@ -115,6 +114,7 @@ const CameraButton: React.FC<Props> = ({ label, email, loadingHandler }) => {
     try {
       const imageResult = await ImagePicker.launchImageLibraryAsync({
         allowsMultipleSelection: false,
+        allowsEditing: true,
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         base64: true,
       });

@@ -175,3 +175,10 @@ def delAccount(email):
     db_class.commit()
     db_class.close()
     return email
+
+def isLogin(email):
+    db_class = naite_db.Database()
+    sql = "SELECT user_email FROM Users WHERE user_email=%s;"
+    id = db_class.executeOne(sql, (email))
+    db_class.close()
+    return id

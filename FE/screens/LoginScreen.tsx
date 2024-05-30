@@ -104,14 +104,14 @@ const LoginScreen = ({ loginHandler }: props) => {
               >
                 CONTINUE
               </RegularButton>
-              <RegularButton
+              {/* <RegularButton
                 color="#FAE36D"
                 onPress={() => {
                   setKakao(true);
                 }}
               >
                 Login with Kakao
-              </RegularButton>
+              </RegularButton> */}
               <RegularButton
                 color="#ACB7C3"
                 onPress={() => {

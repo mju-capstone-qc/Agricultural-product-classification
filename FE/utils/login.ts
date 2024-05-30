@@ -1,5 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { saveLogin } from "../types/type";
+import axios, { AxiosResponse } from "axios";
+import { PYTHON_URI } from "@env";
 
 // 로그인 정보를 저장하는 함수
 export const saveLoginInfo = async (loginInfo: saveLogin) => {
@@ -28,7 +30,20 @@ export const getLoginInfo = async () => {
       loginInfo.refresh = refresh;
     } else if (platform === "local") {
       const email = await AsyncStorage.getItem("@email");
+      const id = await axios
+        .post(`${PYTHON_URI}/autoLogin`, {
+          email: email || "",
+        })
+        .then(
+          (res: AxiosResponse<{ success: boolean; user_email: string }>) =>
+            res.data
+        );
+      console.log(id);
       if (!email) return;
+      if (!id.success || email !== id.user_email) {
+        await AsyncStorage.removeItem("@email");
+        return;
+      }
       loginInfo.email = email;
     }
     console.log("byby", loginInfo);

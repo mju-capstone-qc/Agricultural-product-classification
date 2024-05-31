@@ -1,0 +1,31 @@
+# Ignoring node_modules, you can still have it installed during the build process
+
+node_modules/
+
+# Ignoring build artifacts
+
+build
+dist
+
+# Ignoring configuration files
+
+_.iml
+.idea
+_.log
+
+# Ignoring system files
+
+.DS_Store
+Thumbs.db
+
+# Ignoring other common directories
+
+coverage
+tmp
+temp
+
+# Ignoring specific file types
+
+_.log
+_.tmp
+\*.swp

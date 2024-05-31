@@ -8,7 +8,7 @@ import { products, result } from "../types/type";
 import { getKoreanDate, product_idx } from "../utils/util";
 import { saveResult } from "../utils/save";
 import StandardModal from "../components/StandardModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type RootStackParamList = {
   Result: { result: result[]; label: products; email: string };
@@ -42,10 +42,12 @@ const ResultScreen = ({ route }: Props) => {
     console.log(result);
     url = result[0].url;
     predicted_class = predict as 0 | 1 | 2;
+  }
+  useEffect(() => {
     const date = getKoreanDate();
     console.log(date);
     saveResult(url, email, product_idx[label], predicted_class, date);
-  }
+  }, [email, label]);
   return (
     <>
       <View style={styles.container}>

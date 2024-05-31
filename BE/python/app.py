@@ -1,7 +1,7 @@
 # app.py
 from flask import Flask, request, jsonify
 from model_utils import load_and_compile_model
-from utils import img_check, process_and_save_image, getInfo, localLogin, getHistory, getProfile, editingName, editingPassword, delAccount, saveResult
+from utils import img_check, process_and_save_image, getInfo, localLogin, getHistory, getProfile, editingName, editingPassword, delAccount, saveResult, isLogin
 from google.cloud import storage
 from dotenv import load_dotenv
 import os
@@ -145,5 +145,18 @@ def deleteAccount():
     if(email):
         delAccount(email)
         return {'success':'success'},200
+    
+@app.post('/autoLogin')
+def autoLogin():
+    email = request.json.get('email')
+    if(email):
+        id = isLogin(email)
+        print(id)
+        if(id!=None):
+            return {'success':True, 'user_email':id['user_email']} 
+        else:
+            return {'success':False, 'user_email':''}
+    else:
+        return {'success':False, 'user_email':''}
 
 app.run(host='0.0.0.0', port=5000, debug=False)

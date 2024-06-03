@@ -22,6 +22,8 @@
 
 ```
 capstone
+├─ AI				// ai모델을 학습시킨 코드입니다.
+│
 ├─ BE
 │  ├─ express    	// express서버를 관리합니다.
 │  ├─ models 		// cnn모델들을 관리합니다.

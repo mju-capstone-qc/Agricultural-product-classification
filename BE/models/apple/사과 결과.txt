@@ -1,5 +1,4 @@
-model.h5
-52/52 ━━━━━━━━━━━━━━━━━━━━ 80s 1s/step - accuracy: 0.9032 - f1_m: 0.9020 - loss: 0.5134 - precision_m: 0.9037 - recall_m: 0.9003
-Model testing loss, accuracy, f1_score, precision, recall: 0.4864650368690491   0.9055690169334412   0.9057368040084839   0.9068199396133423   0.9046875238418579  
-58/58 ━━━━━━━━━━━━━━━━━━━━ 72s 1s/step - accuracy: 0.9457 - f1_m: 0.9457 - loss: 0.3270 - precision_m: 0.9457 - recall_m: 0.9457
-Model validation loss, accuracy, f1_score, precision, recall: 0.38700756430625916   0.9306011199951172   0.929238498210907   0.929238498210907   0.929238498210907 
+102/102 ━━━━━━━━━━━━━━━━━━━━ 116s 1s/step - accuracy: 0.9276 - f1_m: 0.9276 - loss: 0.3566 - precision_m: 0.9276 - recall_m: 0.9276
+Model testing loss, accuracy, f1_score, precision, recall: 0.3586670756340027   0.925391435623169   0.9254902601242065   0.9257815480232239   0.9252082705497742  
+112/112 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - accuracy: 0.9150 - f1_m: 0.9151 - loss: 0.5305 - precision_m: 0.9164 - recall_m: 0.9139
+Model validation loss, accuracy, f1_score, precision, recall: 0.5157515406608582   0.9184812903404236   0.9186658263206482   0.919731080532074   0.9176339507102966  

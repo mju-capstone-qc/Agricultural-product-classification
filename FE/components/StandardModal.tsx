@@ -21,7 +21,7 @@ const StandardModal = ({ visible, setHidden, label }: Props) => {
     cabbage: require("../assets/images/cabbage_standard.jpg"),
     apple: require("../assets/images/apple_standard.jpg"),
     radish: require("../assets/images/radish_standard.jpg"),
-    chinese_cabbage: require("../assets/images/chinese_cabbage_standard.jpg"),
+    // chinese_cabbage: require("../assets/images/chinese_cabbage_standard.jpg"),
   };
   return (
     <Modal visible={visible} animationType="fade" transparent={true}>

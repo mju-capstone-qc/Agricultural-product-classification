@@ -11,7 +11,7 @@ const InfoImage = ({ value }: Props) => {
     cabbage: require("../assets/images/cabbage.png"),
     apple: require("../assets/images/apple.png"),
     radish: require("../assets/images/radish.png"),
-    chinese_cabbage: require("../assets/images/chinese_cabbage.png"),
+    // chinese_cabbage: require("../assets/images/chinese_cabbage.png"),
   };
 
   return (

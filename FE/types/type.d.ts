@@ -1,4 +1,4 @@
-export type products = "cabbage" | "apple" | "radish" | "chinese_cabbage";
+export type products = "cabbage" | "apple" | "radish"; // | "chinese_cabbage";
 
 export type result = {
   predicted_percent: number[];

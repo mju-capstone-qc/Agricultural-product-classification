@@ -46,5 +46,5 @@ export const product_idx = {
   cabbage: 1,
   apple: 2,
   radish: 3,
-  chinese_cabbage: 4,
+  // chinese_cabbage: 4,
 };

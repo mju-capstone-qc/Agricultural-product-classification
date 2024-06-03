@@ -107,7 +107,8 @@ def process_and_save_image(email, file, bucket, model, product_id:int):
 
     max_value = max(class_probabilities)
     max_index = class_probabilities.index(max_value)
-
+    max_index %= 3
+    
     db_class.close()
     return {"predicted_percent": class_probabilities, "predicted_class": max_index, "url": 'https://storage.googleapis.com/exaple_naite/'+destination_blob_name}
 

@@ -22,7 +22,7 @@
 
 ```
 capstone
-├─ AI				// ai모델을 학습시킨 코드입니다.
+├─ AI			// ai모델을 학습시킨 코드입니다.
 │
 ├─ BE
 │  ├─ express    	// express서버를 관리합니다.
@@ -31,14 +31,14 @@ capstone
 │  │   ├─ cabbage   
 │  │   └─ radish    
 │  │
-│  └─ python	   // flask서버와 딥러닝 모델을 관리합니다.
+│  └─ python	         // flask서버와 딥러닝 모델을 관리합니다.
 │  
 └─ FE
-   ├─ assets       // 정적파일들을 관리합니다.
-   ├─ components   // 컴포넌트들을 관리합니다.
-   ├─ screens      // 스크린들을 관리합니다.
-   ├─ types        // 타입들을 관리합니다.
-   └─ utils        // 함수들을 관리합니다.
+   ├─ assets            // 정적파일들을 관리합니다.
+   ├─ components        // 컴포넌트들을 관리합니다.
+   ├─ screens           // 스크린들을 관리합니다.
+   ├─ types             // 타입들을 관리합니다.
+   └─ utils             // 함수들을 관리합니다.
  
 
 ```

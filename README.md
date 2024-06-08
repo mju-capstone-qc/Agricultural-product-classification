@@ -2,7 +2,7 @@
 ![브로슈어](https://github.com/rhtjddls123/hello_react/assets/60644352/3013c385-bcc5-4267-b709-9effd23dde12)
 
 ## 시스템 아키텍처
-![시스템아키텍처](https://github.com/rhtjddls123/hello_react/assets/60644352/8d66e9bb-d80a-4886-b0ab-f5d8abbf5089)
+![시스템아키텍처3d](https://github.com/rhtjddls123/Agricultural-product-classification/assets/60644352/c74f62e7-9916-4d69-a967-aef28ddbfc40)
 
 ## 알고리즘
 ![](https://velog.velcdn.com/images/jjjk0605/post/f0d30293-81e9-4ff1-8f51-370327d8ec4d/image.png)

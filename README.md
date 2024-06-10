@@ -9,7 +9,7 @@
 ## 알고리즘
 ![](https://velog.velcdn.com/images/jjjk0605/post/f0d30293-81e9-4ff1-8f51-370327d8ec4d/image.png)
 
-![](https://velog.velcdn.com/images/jjjk0605/post/727e16ab-062f-49ca-9ce4-8a6b579c339c/image.png)
+![image](https://github.com/rhtjddls123/Agricultural-product-classification/assets/60644352/aa092eec-b0c4-465e-8ff1-6d3577510174)
 
 
 ## 개발환경

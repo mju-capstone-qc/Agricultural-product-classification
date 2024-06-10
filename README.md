@@ -1,3 +1,5 @@
+## [최종 발표자료 보러가기](https://docs.google.com/presentation/d/e/2PACX-1vQUcHRtOuFwj0a8N5oigyEV6WJdl1LqsW66oX-JDnCxmga_al-MWjOg4zYbIF20PA/pub?start=false&loop=false&delayms=3000&slide=id.p1)
+
 ## 프로젝트 개요
 ![브로슈어](https://github.com/rhtjddls123/hello_react/assets/60644352/3013c385-bcc5-4267-b709-9effd23dde12)
 
@@ -64,3 +66,5 @@ Chore:	위에 걸리지 않는 기타 변경사항
 - ResultScreen: 진단 결과를 보여주는 페이지
 
 ## 시연영상
+https://github.com/rhtjddls123/Agricultural-product-classification/assets/60644352/f60eaa1d-38a8-486f-9b74-3780d118248a
+

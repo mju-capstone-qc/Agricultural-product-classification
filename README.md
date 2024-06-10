@@ -1,13 +1,15 @@
+## [최종 발표자료 보러가기](https://docs.google.com/presentation/d/e/2PACX-1vQUcHRtOuFwj0a8N5oigyEV6WJdl1LqsW66oX-JDnCxmga_al-MWjOg4zYbIF20PA/pub?start=false&loop=false&delayms=3000&slide=id.p1)
+
 ## 프로젝트 개요
 ![브로슈어](https://github.com/rhtjddls123/hello_react/assets/60644352/3013c385-bcc5-4267-b709-9effd23dde12)
 
 ## 시스템 아키텍처
-![시스템아키텍처](https://github.com/rhtjddls123/hello_react/assets/60644352/8d66e9bb-d80a-4886-b0ab-f5d8abbf5089)
+![시스템아키텍처3d](https://github.com/rhtjddls123/Agricultural-product-classification/assets/60644352/c74f62e7-9916-4d69-a967-aef28ddbfc40)
 
 ## 알고리즘
 ![](https://velog.velcdn.com/images/jjjk0605/post/f0d30293-81e9-4ff1-8f51-370327d8ec4d/image.png)
 
-![](https://velog.velcdn.com/images/jjjk0605/post/727e16ab-062f-49ca-9ce4-8a6b579c339c/image.png)
+![image](https://github.com/rhtjddls123/Agricultural-product-classification/assets/60644352/aa092eec-b0c4-465e-8ff1-6d3577510174)
 
 
 ## 개발환경
@@ -64,3 +66,5 @@ Chore:	위에 걸리지 않는 기타 변경사항
 - ResultScreen: 진단 결과를 보여주는 페이지
 
 ## 시연영상
+https://github.com/rhtjddls123/Agricultural-product-classification/assets/60644352/f60eaa1d-38a8-486f-9b74-3780d118248a
+
